@@ -1,4 +1,4 @@
-f = open("../input.txt")
+f = open("input.txt")
 queue = [int(f.readline()), int(f.readline()), int(f.readline())]
 prevSum = currentSum = sum(queue)
 count = 0
