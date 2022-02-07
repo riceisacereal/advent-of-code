@@ -38,8 +38,8 @@ chosen = []
 for i in range(len(toBeChosen)):
     currentChoice = int(toBeChosen[i].strip())
     relatedCards = bingoCardNums[currentChoice]
-
     chosen.append(currentChoice)
+
     for entry in relatedCards:
         board = entry[0]
         row = entry[1]
