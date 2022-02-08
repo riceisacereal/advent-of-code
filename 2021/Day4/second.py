@@ -31,10 +31,11 @@ for i in range(boardNum + 1):
     track = [0] * 10
     boardTrack.append(track)
 
-winningBoard = 0
-winningNumber = 0
+losingBoard = 0
+losingNumber = 0
 found = False
 chosen = []
+winningBoards = []
 for i in range(len(toBeChosen)):
     currentChoice = int(toBeChosen[i].strip())
     relatedCards = bingoCardNums[currentChoice]
@@ -49,11 +50,13 @@ for i in range(len(toBeChosen)):
         a = boardTrack[board][row]
         b = boardTrack[board][col + 5]
 
-        if a == 5 or b == 5:
-            winningBoard = board
-            winningNumber = currentChoice
-            found = True
-            break
+        if (a == 5 or b == 5) and (board not in winningBoards):
+            winningBoards.append(board)
+            if len(winningBoards) == 100:
+                losingBoard = board
+                losingNumber = currentChoice
+                found = True
+                break
 
     if found:
         break
@@ -66,14 +69,14 @@ for i in range(len(bingoCardNums)):
 
     for entry in bingoCardNums[i]:
         board = entry[0]
-        if board > winningBoard:
+        if board > losingBoard:
             break
-        elif board == winningBoard:
+        elif board == losingBoard:
             total += i
             break
 
 print(bingoCardNums)
-print(winningBoard)
-print(winningNumber)
+print(losingBoard)
+print(losingNumber)
 print(total)
-print(total * winningNumber)
+print(total * losingNumber)
