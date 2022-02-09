@@ -72,7 +72,9 @@ for i in range(len(bingoCardNums)):
             total += i
             break
 
-print(bingoCardNums)
+f.close()
+
+# print(bingoCardNums)
 print(winningBoard)
 print(winningNumber)
 print(total)

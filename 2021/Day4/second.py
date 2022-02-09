@@ -75,6 +75,8 @@ for i in range(len(bingoCardNums)):
             total += i
             break
 
+f.close()
+
 print(bingoCardNums)
 print(losingBoard)
 print(losingNumber)
