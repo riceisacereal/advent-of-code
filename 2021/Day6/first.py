@@ -1,6 +1,3 @@
-import time
-
-
 def pointers(newFish, days):
     age6Pointer = 6
     for i in range(days):
@@ -22,7 +19,7 @@ def queue(newFish, days):
 def main(lines):
     oldFish = lines[0].split(',')
     newFish = [0] * 9
-    days = 256
+    days = 80
 
     # read fish
     for i in range(len(oldFish)):
@@ -31,10 +28,8 @@ def main(lines):
     return pointers(newFish, days)
 
 
-startTime = time.time()
 f = open("input.txt")
 totalFish = main(f.readlines())
 print(totalFish)
-print("Time taken: %s" % ((time.time() - startTime) * 1000000))
 
 f.close()
