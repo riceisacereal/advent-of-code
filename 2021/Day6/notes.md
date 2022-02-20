@@ -1,4 +1,4 @@
-#Fish
+# Fish
 2022-02-20
 
 The idea was pretty easy to understand, I thought of doing it by:
@@ -78,7 +78,7 @@ After fixing these mistakes everything worked.
 I also just implemented a queue method while waiting for my
 answer cooldown on the AoC website.
 
-###Footnotes
+### Footnotes
 <details>
   <summary>*My wrong implementation outputs:</summary>
 
