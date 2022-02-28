@@ -1,10 +1,14 @@
 # Advent of Code
 
 
-Going through the previous events slowly.\
-Trying to write it in Python until I can't and then I will switch to Java.\
-Or maybe I will try writing an entire year with one language, hmm.
+Going through previous events slowly, just for fun.\
+Currently trying to write 2021 in Python until my
+Object-Oriented brain can't think of a non-OOP implementation
+and surrenders to Java.
+
+Added a notes.md to some days when I thought I had a pretty cool idea.\
+Days with notes have a "_n" appended in the directory name, like "DayX_n".
 
 ### 2021:
-12 :star:\
+16 :star:\
 Started: 2022-02-01
