@@ -24,10 +24,10 @@ def get_digit(known, digit):
         return 4
     elif length == 7:
         return 8
-    elif length == 5: # 5 group: 2, 3, 5
+    elif length == 5:  # 5 group: 2, 3, 5
         matches = get_matches(known, digit, 5)
         return fiveGroup[matches]
-    elif length == 6: # 6 group: 0, 6, 9
+    elif length == 6:  # 6 group: 0, 6, 9
         matches = get_matches(known, digit, 6)
         return sixGroup[matches]
 
@@ -47,7 +47,7 @@ def main(lines):
     for line in lines:
         lineSplit = line.split(" | ")
         numbers = lineSplit[0].split(' ')
-        # 1,4
+        # find 1 and 4
         knownNumbers = [[]] * 2
         for num in numbers:
             if len(num) == 2:
@@ -57,7 +57,9 @@ def main(lines):
 
         output = lineSplit[1].strip().split(' ')
         for i in range(4):
+            # get corresponding digit
             digit = get_digit(knownNumbers, output[i])
+            # multiply and add corresponding position to total
             position = 10 ** (3 - i)
             total += digit * position
 

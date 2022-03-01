@@ -1,4 +1,4 @@
-bingoCardNums = [[]] * 100
+bingoBoardNums = [[]] * 100
 
 f = open("input.txt")
 lines = f.readlines()
@@ -19,10 +19,10 @@ for i in range(2, len(lines), 1):
     for columnNum in range(len(split)):
         n = int(split[columnNum].strip())
         entry = [boardNum, rowNum, columnNum]
-        if len(bingoCardNums[n]) == 0:
-            bingoCardNums[n] = [entry]
+        if len(bingoBoardNums[n]) == 0:
+            bingoBoardNums[n] = [entry]
         else:
-            bingoCardNums[n].append(entry)
+            bingoBoardNums[n].append(entry)
     rowNum += 1
 
 # doing the bingo
@@ -37,10 +37,10 @@ found = False
 chosen = []
 for i in range(len(toBeChosen)):
     currentChoice = int(toBeChosen[i].strip())
-    relatedCards = bingoCardNums[currentChoice]
+    relatedBoards = bingoBoardNums[currentChoice]
     chosen.append(currentChoice)
 
-    for entry in relatedCards:
+    for entry in relatedBoards:
         board = entry[0]
         row = entry[1]
         col = entry[2]
@@ -60,11 +60,11 @@ for i in range(len(toBeChosen)):
 
 # calculating result
 total = 0
-for i in range(len(bingoCardNums)):
+for i in range(len(bingoBoardNums)):
     if i in chosen:
         continue
 
-    for entry in bingoCardNums[i]:
+    for entry in bingoBoardNums[i]:
         board = entry[0]
         if board > winningBoard:
             break

@@ -82,10 +82,10 @@ answer cooldown on the AoC website.
 <details>
   <summary>*My wrong implementation outputs:</summary>
 
-    2188480 (wrong array size)
-    1274590 (forgot to change array size for when shifting pointer)
-    653233 (changed both array sizes, pointer still wrong)
-    687372 (making it 81 days bcz I skipped a day, pointer still wrong)
+  2188480 - wrong array size\
+  1274590 - forgot to change array size for when shifting pointer\
+  653233 - changed both array sizes, pointer still wrong\
+  687372 - making it 81 days bcz I skipped a day, pointer still wrong
 
 </details>
 
