@@ -17,6 +17,7 @@ def get_low_points(fileName):
             if int(currLine[i]) < int(prevLine[i]):
                 currLowIndexes[i] = 1
         originalTerrain.append(line)
+
         # flow to right
         for i in range(lineSize - 1):
             if int(currLine[i]) and (int(currLine[i]) > int(currLine[i + 1])):
