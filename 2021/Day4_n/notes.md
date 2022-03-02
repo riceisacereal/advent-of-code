@@ -76,4 +76,4 @@ on the board up and including the winning draw, and I summed the remaining entri
 
 ### Side notes
 I have observed that explaining a procedural idea does not require that much ASCII
-art to model what I had in mind, don't know if that would be a plus or minus though.
+art to model what I had in mind, interesting.
