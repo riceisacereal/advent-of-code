@@ -3,7 +3,8 @@
 
 ## Part 2
 Was thinking of tracking the median while new scores were added, and thought of making
-two separate priority queues to track the numbers bigger and smaller than the median.
+two separate priority queues to track the numbers bigger and smaller than the median.\
+Never did that before so wanted to try it out.
 <details>
   <summary>
     I wrote out the double heap median tracking code in my note-taking app
@@ -21,8 +22,5 @@ into heaps
   ![Screenshot on phone](screenshot.jpg)
 </details>
 
-I can say that I am one of the cool kids who write python in plain text original Notepad
+I can say that I am one of the cool kids who write code in plain text on Notepad
 now.
-
-Now that I think about it there is a similar energy between artists encouraging other
-artists to use references and programmers telling other programmers to use IDEs.

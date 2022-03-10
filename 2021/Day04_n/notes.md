@@ -48,7 +48,8 @@ much data. One of my friends also said that doing OOP in Python can be kinda wei
 so I tried to think of something more procedural.
 
 <details>
-  <summary>I came across this Quora answer that helped me and I really liked:</summary>
+  <summary>I came across this Quora answer that helped me understand the difference
+and I like it quite a bit:</summary>
 
   [Link to original answer by Vipluv Shetty](https://qr.ae/pGdpOG)
   > A procedure-oriented programmer thinks, "What do i have to *do* to solve
@@ -71,7 +72,7 @@ for a board to win.
 
 For calculating the final result, I kept track of the entries of the winning board,
 and the number of draws it took for that board to win, and
-cycled through the original bingo draw list and removed all numbers that appeared
+cycled through the original draws and removed all numbers that appeared
 on the board up and including the winning draw, and I summed the remaining entries.
 
 ### Side notes
