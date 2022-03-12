@@ -1,6 +1,6 @@
 # Advent of Code
 
-22 :star: \
+24 :star: \
 Going through previous events slowly just for fun.
 
 I attached a `notes.md` in some days to note down my thought process, or just to record
