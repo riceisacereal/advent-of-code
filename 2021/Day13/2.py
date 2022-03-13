@@ -5,9 +5,10 @@ def fold(coors, axis, fold_line):
 
 
 def visualize(edges, coors):
-    paper = [[]] * edges[1]
-    for i in range(edges[1]):
-        paper[i] = ['丶'] * edges[0]
+    rows, cols = edges[1] + 1, edges[0] + 1
+    paper = [[]] * rows
+    for i in range(rows):
+        paper[i] = ['丶'] * cols
 
     for c in coors:
         paper[c[1]][c[0]] = '䨻'

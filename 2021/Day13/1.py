@@ -1,59 +1,60 @@
-def add_no_dupe(folded, index, c):
-    bucket = folded[index]
-    if not bucket:
-        # create bucket
-        folded[index] = [c]
-        return
+def process_and_track_edges(edges, line):
+    x, y = (int(x) for x in line[:-1].split(','))
+    if edges[0] == -1:
+        edges[0], edges[1] = x, y
     else:
-        # check for duplicates in bucket
-        for e in bucket:
-            if e[0] == c[0] and e[1] == c[1]:
-                return
-        bucket.append(c)
+        if x > edges[0]:
+            edges[0] = x
+        if y > edges[1]:
+            edges[1] = y
+    return [x, y]
 
 
-def get_size(buckets):
-    size = 0
-    for bucket in buckets:
-        size += len(bucket)
-    return size
+def fold(coors, axis, fold_line):
+    for c in coors:
+        if c[axis] > fold_line:
+            c[axis] = int(2 * fold_line) - c[axis]
 
 
-def fold(buckets, line):
-    n = int(round(get_size(buckets) / 10))
-    folded = [[]] * n
+def count(edges, coors):
+    rows, cols = edges[1] + 1, edges[0] + 1
+    paper = [[]] * rows
+    total = 0
+    for i in range(rows):
+        paper[i] = [0] * cols
 
-    axis = 0 if line[11] == 'x' else 1
-    fold_line = int(line[13:])
+    for c in coors:
+        if paper[c[1]][c[0]] == 0:
+            total += 1
+            paper[c[1]][c[0]] += 1
 
-    for bucket in buckets:
-        for c in bucket:
-            if c[axis] > fold_line:
-                c[axis] = int(2 * fold_line) - c[axis]
-            index = c[axis] % n
-            add_no_dupe(folded, index, c)
-
-    return folded
+    return total
 
 
 def main(file_name):
     f = open(file_name)
     line = f.readline()
     coors = []
+    edges = [-1, -1]
 
     while line:
-        if line[0] == '\n':  # if reached end break
+        if line[0] == '\n':
+            """if reached end break"""
             break
         else:
-            # split and convert to coordinates all in one line
-            coors.append([int(x) for x in line[:-1].split(',')])
+            coors.append(process_and_track_edges(edges, line))
         line = f.readline()
 
-    buckets = [coors]
     # get folding line
     line = f.readline()
-    buckets = fold(buckets, line)
+    axis = 0 if line[11] == 'x' else 1
+    fold_line = int(line[13:])
+    if fold_line < edges[axis]:
+        edges[axis] = fold_line
+
+    fold(coors, axis, fold_line)
+    print("Total dots:", count(edges, coors))
     f.close()
-    print("Total dots:", get_size(buckets))
+
 
 main("input.txt")
