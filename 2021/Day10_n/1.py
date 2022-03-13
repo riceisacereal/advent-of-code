@@ -23,6 +23,7 @@ def main(fileName):
 
         line = f.readline()[:-1]
 
+    f.close()
     return points
 
 

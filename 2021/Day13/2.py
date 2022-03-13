@@ -60,6 +60,7 @@ def main(file_name):
         # visualize(edges, coors)
         line = f.readline()
 
+    f.close()
     visualize(edges, coors)
 
 

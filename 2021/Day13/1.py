@@ -53,7 +53,7 @@ def main(file_name):
     # get folding line
     line = f.readline()
     buckets = fold(buckets, line)
+    f.close()
     print("Total dots:", get_size(buckets))
-
 
 main("input.txt")

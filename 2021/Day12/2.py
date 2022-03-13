@@ -132,6 +132,7 @@ def main(file_name):
     time3 = time.time()
     print("Time method 1:", time2 - time1)
     print("Time method 2:", time3 - time2)
+    f.close()
 
 
 main("input.txt")

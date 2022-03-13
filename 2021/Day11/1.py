@@ -63,6 +63,7 @@ def main(fileName):
     while day(octopi) != len(octopi) * len(octopi[0]):
         i += 1
 
+    f.close()
     return i
 
 

@@ -81,6 +81,7 @@ def main(file_name):
     # count paths
     count_paths(cave, [], "start")
     print("Total paths:", paths)
+    f.close()
 
 
 main("input.txt")
