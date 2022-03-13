@@ -1,9 +1,9 @@
-def main(inputLines):
+def main(file_name):
+    f = open(file_name)
+    lines = f.readlines()
+
     # read all numbers
-    array = inputLines[0].split(',')
-    for i in range(len(array)):
-        string = array[i]
-        array[i] = int(string)
+    array = [int(x) for x in lines[0].split(',')]
 
     sumCrab = sum(array)
     print("Total crab distance:", sumCrab)
@@ -15,12 +15,8 @@ def main(inputLines):
         distance = abs(average - array[i])
         totalFuel += (distance * (distance + 1)) / 2
 
+    f.close()
     return totalFuel
 
 
-f = open("input.txt")
-lines = f.readlines()
-
-print("Total fuel:", main(lines))
-
-f.close()
+print("Total fuel:", main("input.txt"))

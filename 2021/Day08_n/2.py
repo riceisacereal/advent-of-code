@@ -42,7 +42,10 @@ def get_mapped(num):
     return mapped
 
 
-def main(lines):
+def main(file_name):
+    f = open(file_name)
+    lines = f.readlines()
+
     total = 0
     for line in lines:
         lineSplit = line.split(" | ")
@@ -63,12 +66,8 @@ def main(lines):
             position = 10 ** (3 - i)
             total += digit * position
 
+    f.close()
     return total
 
 
-f = open("input.txt")
-l = f.readlines()
-
-print("Total of output:", main(l))
-
-f.close()
+print("Total of output:", main("input.txt"))

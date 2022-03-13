@@ -52,9 +52,9 @@ so I tried to think of something more procedural.
 and I like it quite a bit:</summary>
 
   [Link to original answer by Vipluv Shetty](https://qr.ae/pGdpOG)
-  > A procedure-oriented programmer thinks, "What do i have to *do* to solve
+  > A procedure-oriented programmer thinks, "What do I have to *do* to solve
   > this problem?"\
-  > An object-oriented programmer, on the other hand, thinks, "What am i working
+  > An object-oriented programmer, on the other hand, thinks, "What am I working
   > *with* in this problem?"
 </details>
 
