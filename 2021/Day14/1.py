@@ -49,20 +49,24 @@ def find_difference(symbol_counter):
 
 def main(file_name, STEPS):
     f = open(file_name)
-    lines = f.readlines()
 
-    template = lines[0][:-1]
+    template = f.readline()[:-1]
     rules = {}
     symbol_counter = {}
 
-    for i in range(2, len(lines), 1):
+    """Skip a line"""
+    f.readline()
+    line = f.readline()
+    while line:
         """Record rules"""
-        pair = lines[i][:-1].split(" -> ")
+        pair = line[:-1].split(" -> ")
         rules[pair[0]] = pair[1]
+        line = f.readline()
 
     """Encode polymer into pairs"""
     pairs = process_template(template, symbol_counter)
 
+    """Do the steps"""
     for i in range(STEPS):
         pairs = polymer_step(rules, pairs, symbol_counter)
 
