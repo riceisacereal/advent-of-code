@@ -50,7 +50,7 @@ def process_template(template, e_counter):
         add_to_dic(dic, pair, 1)
 
     """Count last symbol"""
-    add_to_dic(e_counter, template[len(template) - 1], 1)
+    add_to_dic(e_counter, template[-1], 1)
 
     return dic
 
