@@ -25,4 +25,6 @@ Graph traversing
 ### Day 13: Transparent Origami
 Paper folding
 ### Day 14: Extended Polymerization
-A lot of symbol insertion
+Pair hashmap
+### Day 15: Chiton
+Dijksta's Chitons
