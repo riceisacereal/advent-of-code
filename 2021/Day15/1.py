@@ -1,5 +1,6 @@
 import heap
 import graph
+import visualize
 
 
 def update_estimate(row, col, curr_d, cavern, explored, p_finding, next_heap):
@@ -41,6 +42,7 @@ def main(file_name):
     p_finding[0][0] = 0
 
     risk = dijkstra(0, 0, cavern, explored, p_finding, [])
+    # visualize.visualize_chiton(cavern)
 
     print("Risk level to bottom right:", risk)
 
