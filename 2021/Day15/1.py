@@ -33,8 +33,10 @@ def dijkstra(row, col, cavern, explored, p_finding, next_heap):
 
 def main(file_name):
     cavern = graph.parse_graph(file_name)
-    explored = graph.get_blank_map(cavern, 0)
+    """Extend graph for part 2"""
+    graph.extend_graph(cavern)
 
+    explored = graph.get_blank_map(cavern, 0)
     p_finding = graph.get_blank_map(cavern, -1)
     p_finding[0][0] = 0
 
