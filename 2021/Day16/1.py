@@ -20,6 +20,9 @@ def parse_to_bin(string):
     return binary
 
 
+"""Calculation"""
+
+
 def get_binary_to_dec(bits, count):
     dec = 0
     for i in range(count):
@@ -28,9 +31,6 @@ def get_binary_to_dec(bits, count):
 
     increase_index(count)
     return dec
-
-
-"""Calculation"""
 
 
 def get_literal_value(bits):
