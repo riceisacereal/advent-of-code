@@ -29,4 +29,6 @@ Pair hashmap
 ### Day 15: Chiton
 Dijksta's Chitons
 ### Day 16: Packet Decoder
+Read bits
+### Day 17: Trick Shot
 
