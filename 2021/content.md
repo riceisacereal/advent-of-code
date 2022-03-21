@@ -21,14 +21,14 @@ Bracket stack
 ### Day 11: Dumbo Octopus
 Octopus flashes
 ### Day 12: Passage Pathing
-Graph traversing
+Graph traversing through caves
 ### Day 13: Transparent Origami
 Paper folding
 ### Day 14: Extended Polymerization
-Pair hashmap
+Pair hashmap, expands exponentially
 ### Day 15: Chiton
 Dijksta's Chitons
 ### Day 16: Packet Decoder
 Read bits
 ### Day 17: Trick Shot
-
+Maths and Physics
