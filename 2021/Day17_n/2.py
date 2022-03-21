@@ -1,10 +1,14 @@
 def intersects(key_x, value_x, value_y, stops_in_range):
     for step_y in value_y:
         if step_y >= key_x and key_x in stops_in_range:
-            """probe has stopped in x distance at this point"""
+            """
+            Probe has stopped horizontally at this point. Probe can still land in range if
+            steps it takes for y to land in range is > steps it takes for probe to stop horizontally,
+            which is = initial velocity of x
+            """
             return True
         elif step_y in value_x:
-            """has matching step"""
+            """Has matching step"""
             return True
 
     return False
@@ -29,17 +33,20 @@ def add_y_velocities(y_range, y_velocities):
             curr_y_distance += v
 
             if curr_y_distance < y_range[0]:
-                """probe over lowest y"""
+                """Probe has gone over range"""
                 break
+
             elif curr_y_distance <= y_range[1]:
-                """probe in range"""
+                """Probe is in range"""
                 steps = start_v - v + 1
-                """add to negative"""
+
+                """Add to negative"""
                 if y_velocities.get(start_v):
                     y_velocities[start_v].add(steps)
                 else:
                     y_velocities[start_v] = {steps}
-                """add to positive"""
+
+                """Add to positive"""
                 pos_v = (-start_v) - 1
                 if y_velocities.get(pos_v):
                     y_velocities[pos_v].add(2 * pos_v + 1 + steps)
@@ -52,24 +59,24 @@ def add_y_velocities(y_range, y_velocities):
 def add_x_velocities(x_range, x_velocities, stops_in_range):
     for start_v in range(1, (x_range[1] // 2) + 2):
         curr_x_distance = 0
-        """count down"""
+        """Count down for distance travelled/velocity at each step"""
         for v in range(start_v, 0, -1):
             curr_x_distance += v
 
             if curr_x_distance > x_range[1]:
-                """probe has gone over range"""
+                """Probe has gone over range"""
                 break
             elif curr_x_distance >= x_range[0]:
-                """probe is in range"""
+                """Probe is in range"""
                 if v == 1:
-                    """probe stops in range"""
+                    """Probe stops in range"""
                     stops_in_range.add(start_v)
 
                 if x_velocities.get(start_v):
-                    """add current step number"""
+                    """Add current step number"""
                     x_velocities[start_v].add(start_v - v + 1)
                 else:
-                    """create entry with current step number"""
+                    """Create entry with current step number"""
                     x_velocities[start_v] = {start_v - v + 1}
 
 
@@ -87,6 +94,7 @@ def main(file_name):
     f = open(file_name)
     line = f.readline()
     f.close()
+    """Cool one-liner to read the range"""
     x_range, y_range = (list(map(int, square[2:].split(".."))) for square in line[13:].strip().split(", "))
 
     x_velocities, y_velocities = {}, {}
