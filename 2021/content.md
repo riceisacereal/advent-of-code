@@ -32,3 +32,4 @@ Dijksta's Chitons
 Read bits
 ### Day 17: Trick Shot
 Maths and Physics
+### Day 18: Snailfish
