@@ -52,4 +52,5 @@ Read bits
 2022-03-21\
 Maths and Physics
 ### Day 18: Snailfish
+2022-11-28\
 Snailfish numbers

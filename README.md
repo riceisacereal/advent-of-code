@@ -10,6 +10,6 @@ Language: C\
 Started: 2022-03-22
 
 ### 2021:
-35 :star:\
+36 :star:\
 Language: Python\
 Started: 2022-02-01
