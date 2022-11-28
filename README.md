@@ -5,9 +5,11 @@ Casually going through previous events.\
 Noting down some things I learned or just random stuff.
 
 ### 2015:
-Lamguage: C\
+2 :star:\
+Language: C\
 Started: 2022-03-22
 
 ### 2021:
+35 :star:\
 Language: Python\
 Started: 2022-02-01
