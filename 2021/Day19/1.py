@@ -123,7 +123,7 @@ def aligning_helper(beacons, beaconsx, i, scannerx):
     return aligned, i
 
 
-def align_points(beacons, beaconsx, scanner, scannerx):
+def align_points(beacons, beaconsx, scannerx):
     """sort scannerx by every axis asc+desc, and compare gaps to sorted x axis of scanner"""
     beacons.sort(key=lambda x: (x[0], x[1], x[2]))
 
@@ -155,18 +155,7 @@ def align_points(beacons, beaconsx, scanner, scannerx):
     scannerx.change_position(displacement)
 
 
-def main(filename):
-    f = open(filename)
-    lines = f.readlines()
-
-    scanners = read_scanners(lines)
-    calculate_edges(scanners)
-
-    all_beacons = []
-    """add all beacons from scanner 0, everything is relative to scanner 0"""
-    for beacon in scanners[0].beacons:
-        all_beacons.append(beacon)
-
+def locate_scanners(scanners):
     i = 0
     added_scanners = [0]
     """scanner i is always recorded and aligned"""
@@ -188,22 +177,43 @@ def main(filename):
                 clusterx = list(map(lambda x: scanners[j].beacons[x], clusterx))
 
                 """align points and change position of scanner"""
-                align_points(cluster, clusterx, scanners[i], scanners[j])
+                align_points(cluster, clusterx, scanners[j])
                 """transform all beacon positions"""
                 for k in range(len(scanners[j].beacons)):
                     scanners[j].beacons[k] = vector.addition(scanners[j].position, scanners[j].beacons[k])
 
-                """add beacons from scanner j to all beacons"""
-                for beacon in scanners[j].beacons:
-                    if beacon not in all_beacons:
-                        all_beacons.append(beacon)
-
                 added_scanners.append(j)
-                i = j
                 break
+
+
+def main(filename):
+    f = open(filename)
+    lines = f.readlines()
+
+    scanners = read_scanners(lines)
+    calculate_edges(scanners)
+    locate_scanners(scanners)
+
+    """------- 1 -------"""
+    all_beacons = []
+    """add beacons from scanner j to all beacons"""
+    for scanner in scanners:
+        for beacon in scanner.beacons:
+            if beacon not in all_beacons:
+                all_beacons.append(beacon)
 
     all_beacons.sort(key=lambda x: x[0])
     print(len(all_beacons))
+
+    """------- 2 -------"""
+    largest_distance = 0
+    for scanner1 in scanners:
+        for scanner2 in scanners:
+            distance = vector.manhattan_distance(scanner1.position, scanner2.position)
+            if distance > largest_distance:
+                largest_distance = distance
+
+    print(largest_distance)
 
 
 main("input.txt")
