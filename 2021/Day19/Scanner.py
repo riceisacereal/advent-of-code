@@ -1,4 +1,4 @@
-import vector_calculation as vector
+import calculations.vector_calculation as vector
 
 
 class Scanner:
