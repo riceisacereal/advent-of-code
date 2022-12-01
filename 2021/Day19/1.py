@@ -101,7 +101,7 @@ def find_intersection(scanner, scannerx):
     return get_cluster(scanner, scannerx, edge_list, edge_listx)
 
 
-def aligning_helper(ordered, beacons, beaconsx, i, scannerx):
+def aligning_helper(beacons, beaconsx, i, scannerx):
     aligned = True
     for j in range(len(beacons) - 1):
         d = abs(beacons[j][i] - beacons[j + 1][i])
@@ -111,63 +111,48 @@ def aligning_helper(ordered, beacons, beaconsx, i, scannerx):
             break
 
     if aligned:
-        """aligned = ordered, no need to reverse the order"""
-        ordered = True
         """might be opposite sign"""
         d = beacons[0][i] - beacons[1][i]
         dx = beaconsx[0][i] - beaconsx[1][i]
         if d == -dx:
-            # """invert beacons in cluster"""
-            # for beacon in beaconsx:
-            #     beacon[i] = -beacon[i]
-            # """invert all beacons in scanner"""
             scannerx.invert_axis(i)
 
+        """onto next axis"""
         i += 1
 
-    elif ordered:
-        """ordered but not aligned, wrong axis probably"""
-        if i + 1 > 2:
-            raise (Exception, "axis not aligned hmm")
-
-        # for beacon in beaconsx:
-        #     temp = beacon[i]
-        #     beacon[i] = beacon[i + 1]
-        #     beacon[i + 1] = temp
-        scannerx.swap_axis(i, i + 1)
-
-    return aligned, ordered, i
+    return aligned, i
 
 
 def align_points(beacons, beaconsx, scanner, scannerx):
     """sort scannerx by every axis asc+desc, and compare gaps to sorted x axis of scanner"""
-    beacons.sort(key=lambda x: x[0])
+    beacons.sort(key=lambda x: (x[0], x[1], x[2]))
 
     i = 0
-    aligned = False
-    ordered = False
     while i <= 2:
-        if not ordered:
-            """beacons are not in the same order as scanner 0"""
-            beaconsx.sort(key=lambda x: x[i])
+        beaconsx.sort(key=lambda x: (x[0], x[1], x[2]))
 
-        aligned, ordered, i = aligning_helper(ordered, beacons, beaconsx, i, scannerx)
-        if aligned or ordered:
+        """normal order"""
+        aligned, i = aligning_helper(beacons, beaconsx, i, scannerx)
+        if aligned:
             continue
 
-        beaconsx.reverse()
-        aligned, ordered, i = aligning_helper(ordered, beacons, beaconsx, i, scannerx)
+        """inverse"""
+        scannerx.invert_axis(i)
+        beaconsx.sort(key=lambda x: (x[0], x[1], x[2]))
+        aligned, i = aligning_helper(beacons, beaconsx, i, scannerx)
+        if aligned:
+            continue
+
         if not aligned:
+            """not aligned to this axis, swap axis"""
             scannerx.swap_axis(i, i + 1)
+            if i == 0:
+                """x<->y, x<->z => x,y,z -> y,z,x -> z,x,y -> x,y,z"""
+                scannerx.swap_axis(i + 1, i + 2)
 
-    """take first point as a, perform a - ax, find displacement"""
+    """take first point as a, perform a - ax, find displacement from scanner0"""
     displacement = vector.addition(beacons[0], vector.inverse(beaconsx[0]))
-    """get position of newly aligned scanner"""
-    scannerx.change_position(vector.addition(scanner.position, displacement))
-
-
-def add_beacons(all_beacons, scanner):
-    """calculate all points, add to hashset"""
+    scannerx.change_position(displacement)
 
 
 def main(filename):
@@ -177,10 +162,10 @@ def main(filename):
     scanners = read_scanners(lines)
     calculate_edges(scanners)
 
-    all_beacons = set()
+    all_beacons = []
     """add all beacons from scanner 0, everything is relative to scanner 0"""
     for beacon in scanners[0].beacons:
-        all_beacons.add(str(beacon))
+        all_beacons.append(beacon)
 
     i = 0
     added_scanners = [0]
@@ -192,25 +177,33 @@ def main(filename):
                     continue
 
                 """find cluster of intersection"""
-                beacons, beaconsx = find_intersection(scanners[i], scanners[j])
+                cluster, clusterx = find_intersection(scanners[i], scanners[j])
                 """check validity"""
-                if beacons is None:
+                if cluster is None:
                     continue
-                elif len(beacons) != len(beaconsx):
+                elif len(cluster) != len(clusterx):
                     raise(Exception, "Uh Oh")
 
-                beacons = list(map(lambda x: scanners[i].beacons[x], beacons))
-                beaconsx = list(map(lambda x: scanners[j].beacons[x], beaconsx))
+                cluster = list(map(lambda x: scanners[i].beacons[x], cluster))
+                clusterx = list(map(lambda x: scanners[j].beacons[x], clusterx))
 
-                """align points"""
-                align_points(beacons, beaconsx, scanners[i], scanners[j])
+                """align points and change position of scanner"""
+                align_points(cluster, clusterx, scanners[i], scanners[j])
+                """transform all beacon positions"""
+                for k in range(len(scanners[j].beacons)):
+                    scanners[j].beacons[k] = vector.addition(scanners[j].position, scanners[j].beacons[k])
+
                 """add beacons from scanner j to all beacons"""
+                for beacon in scanners[j].beacons:
+                    if beacon not in all_beacons:
+                        all_beacons.append(beacon)
 
                 added_scanners.append(j)
                 i = j
                 break
 
-    print(scanners)
+    all_beacons.sort(key=lambda x: x[0])
+    print(len(all_beacons))
 
 
-main("test.txt")
+main("input.txt")

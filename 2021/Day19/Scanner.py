@@ -14,10 +14,6 @@ class Scanner:
         for beacon in self.beacons:
             beacon[axis] = -beacon[axis]
 
-    def invert_all(self):
-        for i in range(len(self.beacons)):
-            self.beacons[i] = [-x for x in self.beacons[i]]
-
     def swap_axis(self, i, j):
         for beacon in self.beacons:
             temp = beacon[i]
@@ -36,6 +32,10 @@ class Scanner:
                 self.edges.append(edge)
 
     def __str__(self):
+        pos = f"position: {self.position}\n"
+        return pos
+
+    def __repr__(self):
         pos = f"position: {self.position}\n"
         return pos
 
