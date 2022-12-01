@@ -13,3 +13,8 @@ Started: 2022-03-22
 36 :star:\
 Language: Python\
 Started: 2022-02-01
+
+### 2022:
+1 :star:\
+Language: JavaScript\
+Started: 2022-12-01
