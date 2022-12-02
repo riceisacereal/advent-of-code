@@ -1,6 +1,15 @@
 import math
 
 
+def manhattan_distance(v, u):
+    D = len(v)
+    result = 0
+    for i in range(D):
+        result += abs(v[i] - u[i])
+
+    return result
+
+
 def addition(v, u):
     D = len(v)
     result = [0] * D

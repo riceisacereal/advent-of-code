@@ -54,3 +54,6 @@ Maths and Physics
 ### Day 18: Snailfish
 2022-11-28\
 Snailfish numbers
+### Day 19: Beacon Scanner
+2022-12-01\
+Why aren't we aligned
