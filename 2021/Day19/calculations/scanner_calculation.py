@@ -26,7 +26,6 @@ def calculate_edges(scanners):
     """calculate all edges"""
     for scanner in scanners:
         scanner.calculate_edges()
-        # print(scanner.edges)
         """sort edges for ease of comparison later"""
         scanner.edges.sort(key=lambda x: x.distance)
 
@@ -162,7 +161,7 @@ def locate_scanners(scanners):
     while len(added_scanners) < len(scanners):
         for i in added_scanners:
             for j in range(len(scanners)):
-                if i == j or (j in added_scanners and i in added_scanners):
+                if i == j or j in added_scanners:
                     continue
 
                 """find cluster of intersection"""
@@ -170,8 +169,6 @@ def locate_scanners(scanners):
                 """check validity"""
                 if cluster is None:
                     continue
-                elif len(cluster) != len(clusterx):
-                    raise(Exception, "Uh Oh")
 
                 cluster = list(map(lambda x: scanners[i].beacons[x], cluster))
                 clusterx = list(map(lambda x: scanners[j].beacons[x], clusterx))
@@ -179,8 +176,8 @@ def locate_scanners(scanners):
                 """align points and change position of scanner"""
                 align_points(cluster, clusterx, scanners[j])
                 """transform all beacon positions"""
-                for k in range(len(scanners[j].beacons)):
-                    scanners[j].beacons[k] = vector.addition(scanners[j].position, scanners[j].beacons[k])
+                new_pos = scanners[j].position
+                scanners[j].beacons = list(map(lambda x: vector.addition(new_pos, x), scanners[j].beacons))
 
                 added_scanners.append(j)
                 break
