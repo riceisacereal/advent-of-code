@@ -1,5 +1,5 @@
-from calculations.Scanner import Scanner
-from calculations import vector_calculation as vector
+from Scanner import Scanner
+import vector_calculation as vector
 
 
 def read_scanners(lines):
