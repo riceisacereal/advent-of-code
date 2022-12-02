@@ -153,3 +153,34 @@ def align_points(beacons, beaconsx, scannerx):
     """take first point as a, perform a - ax, find displacement from scanner0"""
     displacement = vector.addition(beacons[0], vector.inverse(beaconsx[0]))
     scannerx.change_position(displacement)
+
+
+def locate_scanners(scanners):
+    i = 0
+    added_scanners = [0]
+    """scanner i is always recorded and aligned"""
+    while len(added_scanners) < len(scanners):
+        for i in added_scanners:
+            for j in range(len(scanners)):
+                if i == j or (j in added_scanners and i in added_scanners):
+                    continue
+
+                """find cluster of intersection"""
+                cluster, clusterx = find_intersection(scanners[i], scanners[j])
+                """check validity"""
+                if cluster is None:
+                    continue
+                elif len(cluster) != len(clusterx):
+                    raise(Exception, "Uh Oh")
+
+                cluster = list(map(lambda x: scanners[i].beacons[x], cluster))
+                clusterx = list(map(lambda x: scanners[j].beacons[x], clusterx))
+
+                """align points and change position of scanner"""
+                align_points(cluster, clusterx, scanners[j])
+                """transform all beacon positions"""
+                for k in range(len(scanners[j].beacons)):
+                    scanners[j].beacons[k] = vector.addition(scanners[j].position, scanners[j].beacons[k])
+
+                added_scanners.append(j)
+                break
