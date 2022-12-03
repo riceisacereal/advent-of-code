@@ -8,14 +8,14 @@ let all_calories = [];
 
 for (let line of lines) {
     if (line.length === 0) {
-        all_calories.push(calories)
-        calories = 0
-        continue
+        all_calories.push(calories);
+        calories = 0;
+        continue;
     }
 
-    let c = parseInt(line)
-    calories += c
+    let c = parseInt(line);
+    calories += c;
 }
 
-all_calories.sort((a, b) => b - a)
-console.log(all_calories[0] + all_calories[1] + all_calories[2])
+all_calories.sort((a, b) => b - a);
+console.log(all_calories[0] + all_calories[1] + all_calories[2]);

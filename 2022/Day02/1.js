@@ -11,14 +11,14 @@ for (let line of lines) {
     if (line.length === 0) continue;
 
     let [o, m] = line.split(" ");
-    totalScore += me.indexOf(m) + 1
+    totalScore += me.indexOf(m) + 1;
     if (me.indexOf(m) === (opponent.indexOf(o) + 1) % 3) {
         // I win
-        totalScore += 6
+        totalScore += 6;
     } else if (me.indexOf(m) === opponent.indexOf(o)) {
         // draw
-        totalScore += 3
+        totalScore += 3;
     }
 }
 
-console.log("Total score: " + totalScore)
+console.log("Total score: " + totalScore);

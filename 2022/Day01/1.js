@@ -9,12 +9,12 @@ let max_calories = 0;
 for (let line of lines) {
     if (line.length === 0) {
         if (calories > max_calories) max_calories = calories;
-        calories = 0
-        continue
+        calories = 0;
+        continue;
     }
 
-    let c = parseInt(line)
-    calories += c
+    let c = parseInt(line);
+    calories += c;
 }
 
-console.log(max_calories)
+console.log(max_calories);
