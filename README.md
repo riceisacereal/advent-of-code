@@ -15,6 +15,6 @@ Language: Python\
 Started: 2022-02-01
 
 ### 2022:
-4 :star:\
+6 :star:\
 Language: JavaScript\
 Started: 2022-12-01
