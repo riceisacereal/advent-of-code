@@ -9,3 +9,6 @@ Beach tournament
 ### Day 3: Rucksack Reorganization
 2022-12-03\
 Snack groups
+### Day 4: Camp Cleanup
+2022-12-04\
+Schedule overlap
