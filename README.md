@@ -1,4 +1,4 @@
-# Advent of Code
+# :christmas_tree: [Advent of Code](https://adventofcode.com/)
 
 Casually going through previous events.\
 "DayX_n" with a "_n" appended just means that I added some notes to that day.
@@ -15,6 +15,6 @@ Language: Python\
 Started: 2022-02-01
 
 ### 2022:
-8 :star:\
+10 :star:\
 Language: JavaScript\
 Started: 2022-12-01
