@@ -12,6 +12,9 @@ Snack groups
 ### Day 4: Camp Cleanup
 2022-12-04\
 Schedule overlap
-### Day 5: Day 5: Supply Stacks
+### Day 5: Supply Stacks
 2022-12-05\
 CrateMover 9001
+### Day 6: Tuning Trouble
+2022-12-06\
+Sliding window
