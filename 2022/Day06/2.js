@@ -3,7 +3,7 @@ const fs = require("fs");
 const input = fs.readFileSync("test.txt", "utf-8");
 const lines = input.split(/\r?\n/);
 
-const WINDOW_SIZE = 4;
+const WINDOW_SIZE = 14;
 const DISPLACEMENT = WINDOW_SIZE - 1;
 
 let move = 0; // the number of steps needed to move to get rid of duplicate letter in the window
