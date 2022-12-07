@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const input = fs.readFileSync("test.txt", "utf-8");
+const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split(/\r?\n/);
 
 const LIMIT = 100000;
@@ -44,33 +44,35 @@ function addContent(line) {
         } else {
             // new file
             let file = line.split(" ");
-            currentDir.content[file[1]] = parseInt(file[0]);
+            currentDir.content.set(file[1], parseInt(file[0]));
         }
         line = lines[++i];
     }
 }
 
-// function getSize(dir) {
-//     let sizeOfDir = 0;
-//     for (let fileSize of dir.content.values()) {
-//         sizeOfDir += fileSize;
-//     }
-//
-//     let childDirSize = 0;
-//     for (let childDir of dir.childDirs) {
-//         childDirSize += getSize(childDir);
-//     }
-//     sizeOfDir += childDirSize;
-//
-//     if (sizeOfDir > LIMIT) {
-//
-//     }
-//
-//     return sizeOfDir;
-// }
+function getSize(dir) {
+    let sizeOfDir = 0;
+    for (let fileSize of dir.content.values()) {
+        sizeOfDir += fileSize;
+    }
+
+    let childDirSize = 0;
+    for (let childDir of dir.childDirs) {
+        childDirSize += getSize(childDir);
+    }
+    sizeOfDir += childDirSize;
+
+    if (sizeOfDir < LIMIT) {
+        console.log("Oversize " + dir.name)
+        overSize.push(sizeOfDir);
+    }
+
+    return sizeOfDir;
+}
 
 let root = new Dir("/", null);
 let currentDir = root;
+let overSize = [];
 let i = 0;
 while (i < lines.length) {
     let line = lines[i];
@@ -89,3 +91,9 @@ while (i < lines.length) {
 
 console.log(root);
 
+getSize(root);
+let totalOverSize = 0;
+for (let size of overSize) {
+    totalOverSize += size;
+}
+console.log("Oversize directories: " + totalOverSize);
