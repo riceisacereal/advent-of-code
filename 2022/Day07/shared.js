@@ -3,6 +3,7 @@ class Dir {
         this.name = name;
         this.parent = parent;
         this.childDirs = [];
+        this.files = [];
         this.fileSizes = 0;
     }
 
@@ -40,6 +41,7 @@ function addFiles(currentDir, lines, i) {
             default: // new file
                 let file = line.split(" ");
                 currentDir.fileSizes += parseInt(file[0]);
+                currentDir.files.push([file[1], parseInt(file[0])]);
         }
         line = lines[++i];
     }
