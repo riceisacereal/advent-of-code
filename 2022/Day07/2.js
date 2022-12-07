@@ -11,13 +11,15 @@ class Dir {
         this.name = name;
         this.parent = parent;
         this.childDirs = new Set();
-        this.content = new Map();
+        this.fileSizes = 0;
     }
 
     setSize(size) {
         this.size = size;
     }
 }
+
+const root = new Dir("/", null);
 
 function cd(line) {
     let dir = line.substring(5, line.length);
@@ -38,72 +40,63 @@ function cd(line) {
     }
 }
 
-function addContent(line) {
-    line = lines[++i];
+function addFiles(line) {
     while (i < lines.length > 0 && line[0] !== "$") {
-        if (line[0] === "d") {
-            // new directory
-            let name = line.substring(4, line.length);
-            let newDir = new Dir(name, currentDir);
-            currentDir.childDirs.add(newDir);
-        } else {
-            // new file
-            let file = line.split(" ");
-            currentDir.content.set(file[1], parseInt(file[0]));
+        switch (line[0]) {
+            case "d": // new directory
+                let newDir = new Dir(line.substring(4, line.length), currentDir);
+                currentDir.childDirs.add(newDir);
+                break;
+            default: // new file
+                let file = line.split(" ");
+                currentDir.fileSizes += parseInt(file[0]);
         }
         line = lines[++i];
     }
 }
 
-function getSize(dir) {
+function calculateSizes(dir) {
     let sizeOfDir = 0;
-    for (let fileSize of dir.content.values()) {
-        sizeOfDir += fileSize;
-    }
-
-    let childDirSize = 0;
+    // get size of its own files
+    sizeOfDir += dir.fileSizes;
+    // get size of child directories
     for (let childDir of dir.childDirs) {
-        childDirSize += getSize(childDir);
+        sizeOfDir += calculateSizes(childDir);
     }
-    sizeOfDir += childDirSize;
 
     dir.setSize(sizeOfDir);
-
     return sizeOfDir;
 }
 
-let root = new Dir("/", null);
-let currentDir = root;
-let i = 0;
-while (i < lines.length) {
-    let line = lines[i];
-    if (line[0] === "$") {
-        switch(line[2]) {
-            case "c":
-                cd(line);
-                i++;
-                break;
-            case "l":
-                addContent(line);
-                break;
-        }
+function findFree(dir, threshold) {
+    if (dir.size > threshold && dir.size < min) min = dir.size;
+    for (let childDir of dir.childDirs) {
+        findFree(childDir, threshold);
     }
 }
 
-console.log(root);
+let currentDir;
+let i = 0;
+while (i < lines.length) {
+    let line = lines[i];
+    switch(line[2]) {
+        case "c":
+            cd(line);
+            i++;
+            break;
+        case "l":
+            line = lines[++i];
+            addFiles(line);
+            break;
+    }
+}
 
-getSize(root);
+calculateSizes(root);
+
 console.log("Root size: " + root.size);
 console.log("Has free: " + (LIMIT - root.size));
 console.log("Needs to free up: " + (UPDATE_SIZE - (LIMIT - root.size)));
 
-function findLargerThan(dir, threshold) {
-    if (dir.size > threshold) larger.push(dir.size);
-    for (let childDir of dir.childDirs) {
-        findLargerThan(childDir, threshold);
-    }
-}
-
-let larger = [];
-findLargerThan(root, UPDATE_SIZE - (LIMIT - root.size));
-console.log(Math.min(...larger))
+let min = LIMIT;
+findFree(root, UPDATE_SIZE - (LIMIT - root.size));
+console.log("Smallest directory over threshold: ", min)

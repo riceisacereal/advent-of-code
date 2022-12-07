@@ -12,10 +12,6 @@ class Dir {
         this.childDirs = new Set();
         this.fileSizes = 0;
     }
-
-    setSize(size) {
-        this.size = size;
-    }
 }
 
 const root = new Dir("/", null);
