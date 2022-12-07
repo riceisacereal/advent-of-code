@@ -10,7 +10,7 @@ class Dir {
         this.name = name;
         this.parent = parent;
         this.childDirs = new Set();
-        this.files = new Map();
+        this.fileSizes = 0;
     }
 
     setSize(size) {
@@ -41,28 +41,23 @@ function cd(line) {
 
 function addFiles(line) {
     while (i < lines.length > 0 && line[0] !== "$") {
-        if (line[0] === "d") {
-            // new directory
-            let name = line.substring(4, line.length);
-            let newDir = new Dir(name, currentDir);
-            currentDir.childDirs.add(newDir);
-        } else {
-            // new file
-            let file = line.split(" ");
-            currentDir.files.set(file[1], parseInt(file[0]));
+        switch (line[0]) {
+            case "d": // new directory
+                let newDir = new Dir(line.substring(4, line.length), currentDir);
+                currentDir.childDirs.add(newDir);
+                break;
+            default: // new file
+                let file = line.split(" ");
+                currentDir.fileSizes += parseInt(file[0]);
         }
         line = lines[++i];
     }
 }
 
 function calculateSizes(dir) {
-    if (dir.size !== undefined) return dir.size;
-
     let sizeOfDir = 0;
     // get size of its own files
-    for (let fileSize of dir.files.values()) {
-        sizeOfDir += fileSize;
-    }
+    sizeOfDir += dir.fileSizes;
     // get size of child directories
     for (let childDir of dir.childDirs) {
         sizeOfDir += calculateSizes(childDir);
