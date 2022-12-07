@@ -2,7 +2,7 @@ class Dir {
     constructor(name, parent) {
         this.name = name;
         this.parent = parent;
-        this.childDirs = new Set();
+        this.childDirs = [];
         this.fileSizes = 0;
     }
 
@@ -35,7 +35,7 @@ function addFiles(currentDir, lines, i) {
         switch (line[0]) {
             case "d": // new directory
                 let newDir = new Dir(line.substring(4, line.length), currentDir);
-                currentDir.childDirs.add(newDir);
+                currentDir.childDirs.push(newDir);
                 break;
             default: // new file
                 let file = line.split(" ");

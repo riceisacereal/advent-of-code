@@ -32,10 +32,15 @@ function findFree(dir, threshold) {
 getDirectories(root, lines);
 calculateSizes(root);
 
-console.log("Root size:\n" + root.size);
-console.log("Has free: " + (LIMIT - root.size));
-console.log("Needs to free up: " + (UPDATE_SIZE - (LIMIT - root.size)));
+const PIECES = 100;
+const USED_SPACE = Math.floor(root.size * PIECES / LIMIT);
+const FREE_UP = USED_SPACE - Math.floor(((LIMIT - UPDATE_SIZE)) * PIECES / LIMIT);
+console.log("Used space:\n" + "█".repeat(USED_SPACE) + "░".repeat(PIECES - USED_SPACE));
+console.log("Needs to free up: \n" + "█".repeat(USED_SPACE - FREE_UP) + "▒".repeat(FREE_UP)
+    + "░".repeat(PIECES - USED_SPACE));
 
 let min = LIMIT;
 findFree(root, UPDATE_SIZE - (LIMIT - root.size));
-console.log("Smallest directory over threshold: ", min)
+console.log("Smallest directory to delete: " + min)
+const DELETE = Math.floor(min * PIECES / LIMIT);
+console.log("█".repeat(USED_SPACE - DELETE) + "░".repeat(PIECES - USED_SPACE + DELETE));
