@@ -18,3 +18,6 @@ CrateMover 9001
 ### Day 6: Tuning Trouble
 2022-12-06\
 Sliding window
+### Day 7: No Space Left On Device
+2022-12-07\
+Me when I had an iPhone 4S that only had 5GB of storage
