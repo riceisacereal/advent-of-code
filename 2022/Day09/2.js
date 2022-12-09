@@ -14,7 +14,6 @@ function updateTails() {
 // Loop through all movement to see span
 let spanX, spanY;
 [spanX, spanY] = getSpans(lines);
-
 // Get empty graph
 let visited = getCleanGraph(spanX, spanY);
 
@@ -22,7 +21,6 @@ let knots = [];
 for (let i = 0; i < 10; i++) {
     knots.push([0, 0])
 }
-
 let count = 0;
 pullRope(knots[0], updateTails, lines);
 console.log(count)
