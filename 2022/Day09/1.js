@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const input = fs.readFileSync("test.txt", "utf-8");
+const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split(/\r?\n/);
 
 let spanX, spanY, curX, curY;
@@ -9,7 +9,7 @@ spanY = [0, 0];
 curX = curY = 0;
 
 for (let line of lines) {
-    let steps = parseInt(line[2]);
+    let steps = parseInt(line.substring(2, line.length));
     switch (line[0]) {
         case "U":
             curY += steps;
@@ -42,53 +42,52 @@ for (let i = 0; i < spanY[1] - spanY[0] + 1; i++) {
 }
 
 let head, tail;
-let start = [spanY[1], Math.abs(spanX[0])];
-head = [start[0], start[1]];
-tail = [start[0], start[1]];
+head = [0, 0];
+tail = [0, 0];
 let count = 0;
-
-console.log(start);
 
 function updateTail() {
     let dX, dY;
-    dX = head[1] - tail[1];
-    dY = head[0] - tail[0];
+    dX = head[0] - tail[0];
+    dY = head[1] - tail[1];
 
     if (Math.abs(dX) > 1 || Math.abs(dY) > 1) {
-        tail[0] += Math.sign(dY);
-        tail[1] += Math.sign(dX);
+        tail[0] += Math.sign(dX);
+        tail[1] += Math.sign(dY);
     }
 
-    if (visited[tail[0]][tail[1]] === 0) {
-        visited[tail[0]][tail[1]] = 1;
+    let cX = tail[0] + Math.abs(spanX[0]);
+    let cY = spanY[1] - tail[1];
+    if (visited[cY][cX] === 0) {
+        visited[cY][cX] = 1;
         count++;
     }
 }
 
 for (let line of lines) {
-    let steps = parseInt(line[2]);
+    let steps = parseInt(line.substring(2, line.length));
     switch (line[0]) {
         case "U":
             for (let i = 0; i < steps; i++) {
-                head[0]--;
+                head[1]++;
                 updateTail();
             }
             break;
         case "D":
             for (let i = 0; i < steps; i++) {
-                head[0]++;
+                head[1]--;
                 updateTail();
             }
             break;
         case "L":
             for (let i = 0; i < steps; i++) {
-                head[1]--;
+                head[0]--;
                 updateTail();
             }
             break;
         case "R":
             for (let i = 0; i < steps; i++) {
-                head[1]++;
+                head[0]++;
                 updateTail();
             }
             break;
