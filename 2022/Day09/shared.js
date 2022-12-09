@@ -54,8 +54,53 @@ function updateTail(head, tail) {
     }
 }
 
+function footprint(visited, spanX, spanY, knot) {
+    let cX = knot[0] + Math.abs(spanX[0]);
+    let cY = spanY[1] - knot[1];
+    if (visited[cY][cX] === ".") {
+        visited[cY][cX] = "#";
+        return 1;
+    }
+
+    return 0;
+}
+
+function pullRope(knot, update, lines) {
+    for (let line of lines) {
+        let steps = parseInt(line.substring(2, line.length));
+        switch (line[0]) {
+            case "U":
+                for (let i = 0; i < steps; i++) {
+                    knot[1]++;
+                    update();
+                }
+                break;
+            case "D":
+                for (let i = 0; i < steps; i++) {
+                    knot[1]--;
+                    update();
+                }
+                break;
+            case "L":
+                for (let i = 0; i < steps; i++) {
+                    knot[0]--;
+                    update();
+                }
+                break;
+            case "R":
+                for (let i = 0; i < steps; i++) {
+                    knot[0]++;
+                    update();
+                }
+                break;
+        }
+    }
+}
+
 module.exports = {
     getSpans: getSpans,
     getCleanGraph: getCleanGraph,
-    updateTail: updateTail
+    updateTail: updateTail,
+    footprint: footprint,
+    pullRope: pullRope
 }
