@@ -21,3 +21,9 @@ Sliding window
 ### Day 7: No Space Left On Device
 2022-12-07\
 Me when I had an iPhone 4S that only had 5GB of storage
+### Day 8: Treetop Tree House
+2022-12-08\
+We climb onto each tree and see
+### Day 9: Rope Bridge
+2022-12-09\
+Snek
