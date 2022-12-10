@@ -18,8 +18,8 @@ function drawPixel() {
 
 function addCycle(n) {
     for (let i = 0; i < n; i++) {
-        drawPixel();
         cycle++;
+        drawPixel();
     }
 }
 
@@ -33,7 +33,7 @@ for (let i = 0; i < 6; i++) {
 }
 
 let x = 1;
-let cycle = 1;
+let cycle = 0;
 for (let line of lines) {
     switch (line[0]) {
         case "n":
