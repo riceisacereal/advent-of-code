@@ -13,5 +13,5 @@ Started: 2022-03-22
 Started: 2022-02-01
 
 ### 2022 - JavaScript:
-18 :star:\
+20 :star:\
 Started: 2022-12-01

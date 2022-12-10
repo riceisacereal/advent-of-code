@@ -27,3 +27,6 @@ We climb onto each tree and see
 ### Day 9: Rope Bridge
 2022-12-09\
 Snek
+### Day 10: Cathode-Ray Tube
+2022-12-10\
+[timing](https://youtu.be/sJFnWZH5FXc/)
