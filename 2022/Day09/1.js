@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { getSpans, getCleanGraph, updateTail, footprint, pullRope } = require("./shared");
 
-const input = fs.readFileSync("input.txt", "utf-8");
+const input = fs.readFileSync("test.txt", "utf-8");
 const lines = input.split(/\r?\n/);
 
 function pullTail() {
@@ -19,3 +19,7 @@ let knots = [[0, 0], [0, 0]];
 let count = 0;
 pullRope(knots[0], pullTail, lines);
 console.log(count)
+
+for (let i = 0; i < visited.length; i++) {
+    console.log(visited[i].join(""));
+}
