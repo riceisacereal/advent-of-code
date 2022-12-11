@@ -30,3 +30,6 @@ Snek
 ### Day 10: Cathode-Ray Tube
 2022-12-10\
 [timing](https://youtu.be/sJFnWZH5FXc/)
+### Day 11: Monkey in the Middle
+2022-12-11\
+Anxiety overflow
