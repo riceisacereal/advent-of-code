@@ -1,4 +1,4 @@
-# ★ [Advent of Code](https://adventofcode.com/) ★ :christmas_tree::gift::sparkler:
+# [Advent of Code](https://adventofcode.com/) :christmas_tree::gift::sparkler:
 
 Casually going through previous events.\
 "DayX_n" with a "_n" appended are days where I wrote down some notes for myself. (Which you are also welcome to read if you'd like.)
