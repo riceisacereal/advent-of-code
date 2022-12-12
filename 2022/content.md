@@ -33,3 +33,6 @@ Snek
 ### Day 11: Monkey in the Middle
 2022-12-11\
 Anxiety overflow
+### Day 12: Hill Climbing Algorithm
+2022-12-12\
+Not quite Dijkstra

@@ -12,5 +12,5 @@ Started: 2022-03-22
 Started: 2022-02-01
 
 ### :deciduous_tree: 2022 - JavaScript
-22 :star:\
+24 :star:\
 Started: 2022-12-01
