@@ -1,4 +1,4 @@
-# 🦌🦌🦌 ═ [Advent of Code](https://adventofcode.com/) ══ 🛷🎅🎁_ . 𓂂 ｡◦.°☆ﾟ○ ₒ ˚ 。.
+# 🦌🦌🦌 [Advent of Code](https://adventofcode.com/) 🛷🎅🎁_ . 𓂂 ｡◦.°☆ﾟ○ ₒ ˚ 。.
 
 🛀 Casually going through previous events.\
 📝 "DayX_n" with a "_n" appended are days where I wrote down some notes for myself. (Which you are also welcome to read if you'd like.)
