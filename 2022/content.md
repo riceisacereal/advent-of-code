@@ -36,3 +36,6 @@ Anxiety overflow
 ### Day 12: Hill Climbing Algorithm
 2022-12-12\
 Not quite Dijkstra
+### Day 13: Distress Signal
+2022-12-13\
+Why do manual parsing when you can do `eval()`?
