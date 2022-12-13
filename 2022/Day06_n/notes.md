@@ -1,8 +1,6 @@
 # Window
 2022-12-06
 
-I have realized that I am actually stupid. I see a problem that sounds simple and straightforward, and I think it just works and ignore quite a few edge cases.
-
 My idea was just going through the line and checking if the next letter is the same as any letter in the previous 3, and if there was a duplicate, I would slide the window until the duplicate was out of the frame. Like so:
 ```
           ↓  ↓ next letter
