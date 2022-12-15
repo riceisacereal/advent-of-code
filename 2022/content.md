@@ -42,3 +42,6 @@ Why do manual parsing when you can do `eval()`?
 ### Day 14: Regolith Reservoir
 2022-12-15\
 [sugar, sugar](https://www.bontegames.com/2021/02/sugar-sugar-2021-browser.html)
+### Day 15: Beacon Exclusion Zone
+2022-12-15\
+[Beacons and scanners PTSD](https://adventofcode.com/2021/day/19)
