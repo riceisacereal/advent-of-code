@@ -39,3 +39,6 @@ Not quite Dijkstra
 ### Day 13: Distress Signal
 2022-12-13\
 Why do manual parsing when you can do `eval()`?
+### Day 14: Regolith Reservoir
+2022-12-15\
+[sugar, sugar](https://www.bontegames.com/2021/02/sugar-sugar-2021-browser.html)
