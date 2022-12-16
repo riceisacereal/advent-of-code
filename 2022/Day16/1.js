@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const input = fs.readFileSync("input.txt", "utf-8");
+const input = fs.readFileSync("test.txt", "utf-8");
 const lines = input.split(/\r?\n/);
 
 let TIME = 30;
@@ -25,89 +25,113 @@ function parse(lines) {
 }
 
 function getWorkingValves(valveMap) {
-    let workingValves = new Map();
+    let workingValves = [];
     for (let [key, value] of valveMap) {
-        if (value.flow > 0) workingValves.set(key, 0);
+        if (value.flow > 0) workingValves.push(key);
     }
-
     return workingValves;
 }
 
-function getValveDistance(valveMap) {
-    let distance = new Map();
-    for (let [key, value] of valveMap) {
-        distance.set(key, 0);
-    }
+// function getValveDistance(valveMap) {
+//     let distance = new Map();
+//     for (let [key, value] of valveMap) {
+//         distance.set(key, 0);
+//     }
+//
+//     return distance;
+// }
+//
+// function findNextValve(workingValves, valveMap) {
+//     let maxRelease = ["", 0];
+//     for (let [key, value] of workingValves) {
+//         let ratio = valveMap.get(key).flow / (value ** 2);
+//         if (ratio > maxRelease[1]) maxRelease = [key, ratio];
+//     }
+//     let potential = (TIME - workingValves.get(maxRelease[0]) - 1) * valveMap.get(maxRelease[0]).flow;
+//     return [maxRelease[0], potential];
+// }
+//
+// function BFS(valveMap) {
+//     let releasedPressure = 0;
+//
+//     // let visited = [];
+//     let queue = [];
+//     queue.push("AA");
+//     // let workingValves = getWorkingValves(valveMap);
+//     let distance = getValveDistance(valveMap);
+//     let reached = 0;
+//     while (workingValves.size > 0 && TIME >= 0) {
+//         let checkedValves = 0;
+//         let level = 0;
+//         while (checkedValves < workingValves.size) {
+//             let nextValves = [];
+//             while (queue.length > 0) {
+//                 let valve = queue.shift();
+//                 visited.push(valve);
+//                 if (workingValves.has(valve)) {
+//                     workingValves.set(valve, level);
+//                     checkedValves++;
+//                 }
+//
+//                 for (let neighbour of valveMap.get(valve).neighbours) {
+//                     if (!visited.includes(neighbour) && !nextValves.includes(neighbour) && !queue.includes(neighbour)) {
+//                         nextValves.push(neighbour);
+//                     }
+//                 }
+//             }
+//             queue = nextValves;
+//             level++;
+//         }
+//
+//         let nextValve = findNextValve(workingValves, valveMap);
+//
+//         let distance = workingValves.get(nextValve[0]);
+//         TIME -= distance + 1;
+//         releasedPressure += nextValve[1];
+//
+//         console.log(nextValve[0]);
+//         workingValves.delete(nextValve[0]);
+//
+//         visited = [];
+//         queue = [];
+//         queue.push(nextValve[0]);
+//     }
+//
+//     return releasedPressure;
+// }
 
-    return distance;
+function getPressure(valveMap, valves) {
+
 }
 
-function findNextValve(workingValves, valveMap) {
-    let maxRelease = ["", 0];
-    for (let [key, value] of workingValves) {
-        let ratio = valveMap.get(key).flow / (value ** 2);
-        if (ratio > maxRelease[1]) maxRelease = [key, ratio];
+function newSwap(valves, a, b) {
+    let newOrder = [];
+    for (let i = 0; i < valves.length; i++) {
+        newOrder.push(valves[i]);
     }
-    let potential = (TIME - workingValves.get(maxRelease[0]) - 1) * valveMap.get(maxRelease[0]).flow;
-    return [maxRelease[0], potential];
+
+    let temp = newOrder[a];
+    newOrder[a] = newOrder[b];
+    newOrder[b] = temp;
+    return newOrder;
 }
 
-function BFS(valveMap) {
-    let releasedPressure = 0;
-
-    let visited = [];
-    let queue = [];
-    queue.push("AA");
-    let workingValves = getWorkingValves(valveMap);
-    while (workingValves.size > 0 && TIME >= 0) {
-        let checkedValves = 0;
-        let level = 0;
-        while (checkedValves < workingValves.size) {
-            let nextValves = [];
-            while (queue.length > 0) {
-                let valve = queue.shift();
-                visited.push(valve);
-                if (workingValves.has(valve)) {
-                    workingValves.set(valve, level);
-                    checkedValves++;
-                }
-
-                for (let neighbour of valveMap.get(valve).neighbours) {
-                    if (!visited.includes(neighbour) && !nextValves.includes(neighbour) && !queue.includes(neighbour)) {
-                        nextValves.push(neighbour);
-                    }
-                }
-            }
-            queue = nextValves;
-            level++;
-        }
-
-        let nextValve = findNextValve(workingValves, valveMap);
-
-        let distance = workingValves.get(nextValve[0]);
-        TIME -= distance + 1;
-        releasedPressure += nextValve[1];
-
-        console.log(nextValve[0]);
-        workingValves.delete(nextValve[0]);
-
-        visited = [];
-        queue = [];
-        queue.push(nextValve[0]);
+function makeOrder(valves, start, end) {
+    if (start === end) console.log(valves);
+    for (let i = start; i <= end; i++) {
+        makeOrder(newSwap(valves, start, i), start + 1, end);
     }
-
-    return releasedPressure;
 }
 
 function main() {
     let valveMap = parse(lines);
 
-    let releasedPressure = BFS(valveMap);
-    // let workingValves = getWorkingValves(valveMap);
+    // let releasedPressure = BFS(valveMap);
+    let workingValves = getWorkingValves(valveMap);
+    // TODO: All possible combinations
+    makeOrder(workingValves, 0, workingValves.length - 1);
 
-
-
-    console.log(releasedPressure);
+    // console.log(releasedPressure);
 }
 
 main();
