@@ -7,6 +7,7 @@ class Valve {
     constructor(flow, neighbours) {
         this.flow = flow;
         this.neighbours = neighbours;
+        this.distance = {};
     }
 }
 
@@ -30,38 +31,16 @@ function getWorkingValves(valveMap) {
 
 function getPressure(valveMap, valves, start) {
     let pressure = 0;
-
     let time = 30;
     let currentValve = start;
-    while (valves.length > 0) {
-        // Next valve to find
-        let valve = valves.shift();
 
-        // BFS queue
-        let queue = [];
-        queue.push(currentValve);
-
-        // Distance to visiting valves
-        let visited = {};
-        visited[currentValve] = 0;
-        while (queue.length > 0) {
-            let v = queue.shift();
-            // Found value
-            if (valve === v) break;
-
-            for (let n of valveMap[v].neighbours) {
-                if (visited[n] === undefined) {
-                    queue.push(n);
-                    // Add 1 to distance from current valve
-                    visited[n] = visited[v] + 1;
-                }
-            }
-        }
-
-        time -= visited[valve] + 1;
+    for (let v of valves) {
+        // Time for currentValve -> v
+        time -= valveMap[currentValve].distance[v] + 1;
         if (time < 0) break;
-        pressure += time * valveMap[valve].flow;
-        currentValve = valve;
+
+        pressure += time * valveMap[v].flow;
+        currentValve = v;
     }
 
     return pressure;
@@ -87,21 +66,56 @@ function makeOrder(valveMap, valves, start, end) {
 }
 
 let maxPressure = 0;
+let count = 0;
 function trackMaxPressure(pressure) {
     // console.log(pressure);
+    count++;
+    if (count % 10000000 === 0) console.log(count);
     if (pressure > maxPressure) maxPressure = pressure;
+}
+
+function BFS(valveMap, valves, valve) {
+    let queue = [valve];
+    let distance = {};
+    distance[valve] = 0;
+
+    let count = 0;
+    while (count < valves.length && queue.length > 0) {
+        let v = queue.shift();
+        if (valves.includes(v)) {
+            // Add distance to distance map of valve
+            valveMap[valve].distance[v] = distance[v];
+            count++;
+        }
+
+        for (let n of valveMap[v].neighbours) {
+            if (distance[n] === undefined) {
+                distance[n] = distance[v] + 1;
+                queue.push(n);
+            }
+        }
+    }
+}
+
+function makeDistance(valveMap, valves, start) {
+    BFS(valveMap, valves, start);
+    for (let valve of valves) {
+        BFS(valveMap, valves, valve);
+    }
 }
 
 function main() {
     let valveMap = parse(lines);
-    // console.log(valveMap);
-
     let workingValves = getWorkingValves(valveMap);
-    // TODO: All possible combinations
-    makeOrder(valveMap, workingValves, 0, workingValves.length - 1);
+    // Make distance map
+    makeDistance(valveMap, workingValves, "AA");
     // console.log(getPressure(valveMap, workingValves, "AA"));
-    // makeOrder(workingValves, 0, workingValves.length - 1);
 
+    // // TODO: All possible combinations
+    makeOrder(valveMap, workingValves, 0, workingValves.length - 1);
+    // // console.log(getPressure(valveMap, workingValves, "AA"));
+    // // makeOrder(workingValves, 0, workingValves.length - 1);
+    //
     console.log(maxPressure);
 }
 
