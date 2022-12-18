@@ -11,6 +11,18 @@ class Valve {
     }
 }
 
+class Path {
+    constructor(visited, valve, stepsAway, pressure) {
+        this.visited = [];
+        for (let v of visited) {
+            this.visited.push(v);
+        }
+        this.valve = valve;
+        this.stepsAway = stepsAway;
+        this.pressure = pressure;
+    }
+}
+
 function parse(lines) {
     let info = lines.map(x => x.split(/Valve | has flow rate=|; tunnels* leads* to valves* |, /).filter(e => e));
 
@@ -23,55 +35,10 @@ function parse(lines) {
 
 function getWorkingValves(valveMap) {
     let workingValves = [];
-    for (let [key, value] of Object.entries(valveMap)) {
-        if (value.flow > 0) workingValves.push(key);
+    for (let key in valveMap) {
+        if (valveMap[key].flow > 0) workingValves.push(key);
     }
     return workingValves;
-}
-
-function getPressure(valveMap, valves, start) {
-    let pressure = 0;
-    let time = 30;
-    let currentValve = start;
-
-    for (let v of valves) {
-        // Time for currentValve -> v
-        time -= valveMap[currentValve].distance[v] + 1;
-        if (time < 0) break;
-
-        pressure += time * valveMap[v].flow;
-        currentValve = v;
-    }
-
-    return pressure;
-}
-
-function newSwap(valves, a, b) {
-    let newOrder = [];
-    for (let i = 0; i < valves.length; i++) {
-        newOrder.push(valves[i]);
-    }
-
-    let temp = newOrder[a];
-    newOrder[a] = newOrder[b];
-    newOrder[b] = temp;
-    return newOrder;
-}
-
-function makeOrder(valveMap, valves, start, end) {
-    if (start === end) trackMaxPressure(getPressure(valveMap, valves, "AA"));
-    for (let i = start; i <= end; i++) {
-        makeOrder(valveMap, newSwap(valves, start, i), start + 1, end);
-    }
-}
-
-let maxPressure = 0;
-let count = 0;
-function trackMaxPressure(pressure) {
-    // console.log(pressure);
-    count++;
-    if (count % 10000000 === 0) console.log(count);
-    if (pressure > maxPressure) maxPressure = pressure;
 }
 
 function BFS(valveMap, valves, valve) {
@@ -104,18 +71,58 @@ function makeDistance(valveMap, valves, start) {
     }
 }
 
+let maxPressure = 0;
+function trackMaxPressure(pressure) {
+    if (pressure > maxPressure) maxPressure = pressure;
+}
+
+function getPressure(valveMap, valves) {
+    let paths = [];
+    let start = new Path([], "AA", -1, 0);
+    paths.push(start);
+    for (let i = 30; i >= 0; i--) {
+        let newPaths = [];
+
+        while (paths.length > 0) {
+            let p = paths.shift();
+            if (p.stepsAway > 0) {
+                // valve reached, turn on
+                p.stepsAway -= 1;
+                newPaths.push(p);
+                continue;
+            }
+            if (p.stepsAway === 0) p.pressure += valveMap[p.valve].flow * i;
+
+            // if valve turned on, loop through next valves and make new path, push this valve onto visited
+            p.visited.push(p.valve);
+            // visited all valves
+            if (p.visited.length === valves.length + 1) {
+                trackMaxPressure(p.pressure);
+            }
+            for (let v of valves) {
+                if (!p.visited.includes(v)) {
+                    // can reach?
+                    let d = valveMap[p.valve].distance[v];
+                    if (i - d - 1 > 0) {
+                        let np = new Path(p.visited, v, d, p.pressure);
+                        newPaths.push(np);
+                    } else {
+                        trackMaxPressure(p.pressure);
+                    }
+                }
+            }
+        }
+
+        paths = newPaths;
+    }
+}
+
 function main() {
     let valveMap = parse(lines);
     let workingValves = getWorkingValves(valveMap);
     // Make distance map
     makeDistance(valveMap, workingValves, "AA");
-    // console.log(getPressure(valveMap, workingValves, "AA"));
-
-    // // TODO: All possible combinations
-    makeOrder(valveMap, workingValves, 0, workingValves.length - 1);
-    // // console.log(getPressure(valveMap, workingValves, "AA"));
-    // // makeOrder(workingValves, 0, workingValves.length - 1);
-    //
+    getPressure(valveMap, workingValves);
     console.log(maxPressure);
 }
 
