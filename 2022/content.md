@@ -45,3 +45,6 @@ Why do manual parsing when you can do `eval()`?
 ### Day 15: Beacon Exclusion Zone
 2022-12-15\
 [Beacons and scanners PTSD](https://adventofcode.com/2021/day/19)
+### Day 16: Proboscidea Volcanium
+2022-12-19\
+Factorial trial and error
