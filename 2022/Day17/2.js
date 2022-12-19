@@ -1,8 +1,6 @@
 const fs = require("fs");
 const { Rock, JetStream, getEmptyMap, extendMap, printMap } = require("./shared");
 
-console.time("time");
-
 const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split(/\r?\n/);
 
@@ -82,4 +80,3 @@ function main() {
 }
 
 main();
-console.timeEnd("time");

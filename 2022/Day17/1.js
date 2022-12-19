@@ -34,7 +34,7 @@ function main() {
         // Increase rock counter and extend map
         rockType++;
         if (rockType >= 5) rockType -= 5;
-        extendMap(map, highPoint, rockType)
+        extendMap(map, highPoint, rockType);
     }
 
     console.log(highPoint + 1);
