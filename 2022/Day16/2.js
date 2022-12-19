@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { parse, getWorkingValves, makeDistance, getMaxPressure, trackMaxPressure} = require("./shared");
+const { getMaxPressure, trackMaxPressure, getAll} = require("./shared");
 
 const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split(/\r?\n/);
@@ -36,22 +36,9 @@ function getPressure(valveMap, valves, visited, myPlace, ePlace, myTime, eTime, 
 }
 
 function main() {
-    let valveMap = parse(lines);
-    let workingValves = getWorkingValves(valveMap);
-    // Make distance map
-    makeDistance(valveMap, workingValves, "AA");
-    workingValves.push("AA");
-
-    let visited = [];
-    for (let i = 0; i < workingValves.length; i++) {
-        visited.push(0);
-    }
-    let last = visited.length - 1;
-    visited[last] = 1;
-    getPressure(valveMap, workingValves, visited, last, last, 26, 26, 0);
+    let [valveMap, workingValves, visited] = getAll(lines);
+    getPressure(valveMap, workingValves, visited, visited.length - 1, visited.length - 1, 26, 26, 0);
     console.log(getMaxPressure());
 }
 
 main();
-
-// 1688 low

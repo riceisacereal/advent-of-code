@@ -58,7 +58,7 @@ let maxPressure = 0;
 function trackMaxPressure(pressure) {
     if (pressure > maxPressure) {
         maxPressure = pressure;
-        console.log(maxPressure);
+        // console.log(maxPressure);
     }
 }
 
@@ -66,11 +66,25 @@ function getMaxPressure() {
     return maxPressure;
 }
 
+function getAll(lines) {
+    let valveMap = parse(lines);
+    let workingValves = getWorkingValves(valveMap);
+    // Make distance map
+    makeDistance(valveMap, workingValves, "AA");
+    workingValves.push("AA");
+
+    let visited = [];
+    for (let i = 0; i < workingValves.length; i++) {
+        visited.push(0);
+    }
+    let last = visited.length - 1;
+    visited[last] = 1;
+
+    return [valveMap, workingValves, visited];
+}
+
 module.exports = {
-    Valve: Valve,
-    parse: parse,
-    getWorkingValves: getWorkingValves,
-    makeDistance: makeDistance,
     trackMaxPressure: trackMaxPressure,
-    getMaxPressure: getMaxPressure
+    getMaxPressure: getMaxPressure,
+    getAll: getAll
 }
