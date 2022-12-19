@@ -1,23 +1,42 @@
 const fs = require("fs");
 const { Rock, JetStream, getEmptyMap, extendMap, printMap } = require("./shared");
 
+console.time("time");
+
 const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split(/\r?\n/);
+
+class Capture {
+    constructor(rockType, highPoint, rocksFallen, map) {
+        this.rockType = rockType;
+        this.highPoint = highPoint;
+        this.rocksFallen = rocksFallen;
+        this.topLayer = [...map[highPoint], ...map[highPoint - 1], ...map[highPoint - 2]];
+    }
+
+    equals(other) {
+        if (this.rockType !== other.rockType) return false;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 7; j++) {
+                if (this.topLayer[i][j] !== other.topLayer[i][j]) return false;
+            }
+        }
+        return true;
+    }
+}
 
 function main() {
     let map = getEmptyMap();
     let jetStream = new JetStream(lines);
 
-    // Let 2022 rocks fall
     let highPoint = -1;
     let rockType = 0;
-    let loopUntil = 1000000000000;
+    let fallingRocks = 1000000000000;
 
-    let count = 0;
-    let record = 0;
-    let rocksClimbed = 0;
+    let captures = [];
+    let cut = false;
     let cutGain = 0;
-    for (let rocks = 0; rocks < loopUntil; rocks++) {
+    for (let rocks = 0; rocks < fallingRocks; rocks++) {
         let thisRock = new Rock(rockType, highPoint);
 
         let still = false;
@@ -26,20 +45,21 @@ function main() {
             thisRock.jetPush(jetStream.getNext(), map);
             // Fall
             still = thisRock.fall(map);
-            if (jetStream.index === 0 && count < 8) {
-                count++;
-                if (count === 3) {
-                    record = highPoint;
-                    rocksClimbed = rocks;
-                } else if (count === 8) {
-                    let gain = highPoint - record;
-                    let climb = rocks - rocksClimbed;
+            if (jetStream.index === 0 && cut === false) {
+                let newCapture = new Capture(rockType, highPoint, rocks, map);
+                for (let oldCapture of captures) {
+                    if (newCapture.equals(oldCapture)) {
+                        let heightGain = newCapture.highPoint - oldCapture.highPoint;
+                        let rocksFallen = newCapture.rocksFallen - oldCapture.rocksFallen;
 
-                    let times = Math.floor((loopUntil - rocks) / climb);
-                    loopUntil = rocks + (loopUntil - rocks) % climb;
-                    cutGain = gain * times;
+                        let loopAppears = Math.floor((fallingRocks - rocks) / rocksFallen);
+                        fallingRocks = rocks + (fallingRocks - rocks) % rocksFallen;
+                        cutGain = heightGain * loopAppears;
+
+                        cut = true;
+                    }
                 }
-                printMap(map);
+                captures.push(newCapture);
             }
         }
 
@@ -62,3 +82,4 @@ function main() {
 }
 
 main();
+console.timeEnd("time");
