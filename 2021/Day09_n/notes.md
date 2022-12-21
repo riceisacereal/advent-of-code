@@ -1,7 +1,7 @@
 # Lava tubes
 2022-03-02
 
-This one was hard to think of a way to lower calculations needed.\
+This one was hard to think of a way to lower the calculations needed.\
 (I don't think I did a good job with that.)
 
 ## Part 1
