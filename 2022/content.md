@@ -48,3 +48,9 @@ Why do manual parsing when you can do `eval()`?
 ### Day 16: Proboscidea Volcanium
 2022-12-19\
 Factorial trial and error
+### Day 17: Pyroclastic Flow
+2022-12-19\
+Looping Tetris
+### Day 18: Boiling Boulders
+2022-12-21\
+Positive negative search
