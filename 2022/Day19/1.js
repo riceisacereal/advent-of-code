@@ -73,7 +73,7 @@ class Backpack {
 
     timeSkipToEnd(end) {
         let time = end - this.time;
-        this.timeSkip(time);
+        return this.materials[3] + time * this.bots[3];
     }
 
     collectMaterials() {
@@ -110,12 +110,20 @@ function exploreBuildingSequence(blueprint, backpack, buildBot, geodeCount) {
         backpack.buildBot(blueprint, buildBot);
     }
 
-    if (backpack.time === 24) {
-        // Time up, report geode gain
-        return backpack.materials[3];
+    // By the time bot is built can't gain anyway, stop
+    if (backpack.time >= 23) {
+        geodeCount.compareAndSet(backpack.timeSkipToEnd(24));
+        return;
     }
+    //
+    // let times = [];
+    // for (let bot = 0; bot < 4; bot++) {
+    //     times.push(backpack.timeNeeded(blueprint, bot));
+    // }
+    //
+    // let nextBot =
 
-    // Needed bot built, branch into 4 next bots
+    // Bot built, branch into 4 next bots
     for (let bot = 0; bot < 4; bot++) {
         // Does not have required materials to build the bot
         if (bot > 1 && backpack.bots[bot - 1] === 0) continue;
@@ -123,36 +131,37 @@ function exploreBuildingSequence(blueprint, backpack, buildBot, geodeCount) {
         // Bot has enough supply for demand
         if (backpack.enoughSupply(blueprint, bot)) continue;
 
+        // End of search
         if (backpack.time + backpack.timeNeeded(blueprint, bot) >= 24) {
-            // Can't buy more bots, this is the end
-            backpack.timeSkipToEnd(24);
-            geodeCount.compareAndSet(backpack.materials[3]);
+            geodeCount.compareAndSet(backpack.timeSkipToEnd(24));
             continue;
         }
 
         let newBackPack = new Backpack();
         newBackPack.copyBackpack(backpack);
-        geodeCount.compareAndSet(exploreBuildingSequence(blueprint, newBackPack, bot, geodeCount));
+        exploreBuildingSequence(blueprint, newBackPack, bot, geodeCount);
     }
 }
 
 function getMaxGeode(blueprint, geodeCount) {
     for (let bot = 0; bot < 4; bot++) {
         let newBackPack = new Backpack();
-        geodeCount.compareAndSet(exploreBuildingSequence(blueprint, newBackPack, bot, geodeCount));
+        exploreBuildingSequence(blueprint, newBackPack, bot, geodeCount);
     }
 }
 
 function main() {
+    console.time("Time lapsed: ");
     let sumQuality = 0;
     for (let i = 1; i <= lines.length; i++) {
         let geodeCount = new GeodeTracker();
         let blueprint = new Blueprint(lines[i - 1]);
         getMaxGeode(blueprint, geodeCount);
-        console.log(geodeCount.maxGeodes);
+        // console.log(geodeCount.maxGeodes);
         sumQuality += i * geodeCount.maxGeodes;
     }
     console.log(sumQuality);
+    console.timeEnd("Time lapsed: ");
 }
 
 main();
