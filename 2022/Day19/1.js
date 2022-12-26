@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const input = fs.readFileSync("test.txt", "utf-8");
+const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split(/\r?\n/);
 
 class Blueprint {
@@ -93,8 +93,17 @@ class Backpack {
     }
 }
 
-function exploreBuildingSequence(blueprint, backpack, buildBot) {
-    // buildBot = 0-3;
+class GeodeTracker {
+    constructor() {
+        this.maxGeodes = 0;
+    }
+
+    compareAndSet(n) {
+        if (n > this.maxGeodes) this.maxGeodes = n;
+    }
+}
+
+function exploreBuildingSequence(blueprint, backpack, buildBot, geodeCount) {
     let timeNeeded = backpack.timeNeeded(blueprint, buildBot);
     if (backpack.time + timeNeeded < 24) {
         backpack.timeSkip(timeNeeded);
@@ -106,49 +115,44 @@ function exploreBuildingSequence(blueprint, backpack, buildBot) {
         return backpack.materials[3];
     }
 
-    // TODO: Needed bot built, branch into 4 next bots
-    let maxGeodes = 0;
+    // Needed bot built, branch into 4 next bots
     for (let bot = 0; bot < 4; bot++) {
         // Does not have required materials to build the bot
         if (bot > 1 && backpack.bots[bot - 1] === 0) continue;
 
-        // Has enough supply for this bot
-        if (backpack.enoughSupply(blueprint, bot)) {
-            continue;
-        }
+        // Bot has enough supply for demand
+        if (backpack.enoughSupply(blueprint, bot)) continue;
 
         if (backpack.time + backpack.timeNeeded(blueprint, bot) >= 24) {
             // Can't buy more bots, this is the end
             backpack.timeSkipToEnd(24);
-            if (backpack.materials[3] > maxGeodes) maxGeodes = backpack.materials[3];
+            geodeCount.compareAndSet(backpack.materials[3]);
             continue;
         }
 
         let newBackPack = new Backpack();
         newBackPack.copyBackpack(backpack);
-        let geodes = exploreBuildingSequence(blueprint, newBackPack, bot);
-        if (geodes > maxGeodes) maxGeodes = geodes;
+        geodeCount.compareAndSet(exploreBuildingSequence(blueprint, newBackPack, bot, geodeCount));
     }
-
-    return maxGeodes;
 }
 
-function getMaxGeode(blueprint) {
-    let maxGeodes = 0;
+function getMaxGeode(blueprint, geodeCount) {
     for (let bot = 0; bot < 4; bot++) {
         let newBackPack = new Backpack();
-        let geodes = exploreBuildingSequence(blueprint, newBackPack, bot);
-        if (geodes > maxGeodes) maxGeodes = geodes;
+        geodeCount.compareAndSet(exploreBuildingSequence(blueprint, newBackPack, bot, geodeCount));
     }
-    return maxGeodes;
 }
 
 function main() {
-    for (let line of lines) {
-        let blueprint = new Blueprint(line);
-        let maximum = getMaxGeode(blueprint);
-        console.log(maximum);
+    let sumQuality = 0;
+    for (let i = 1; i <= lines.length; i++) {
+        let geodeCount = new GeodeTracker();
+        let blueprint = new Blueprint(lines[i - 1]);
+        getMaxGeode(blueprint, geodeCount);
+        console.log(geodeCount.maxGeodes);
+        sumQuality += i * geodeCount.maxGeodes;
     }
+    console.log(sumQuality);
 }
 
 main();
