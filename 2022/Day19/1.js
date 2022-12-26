@@ -29,24 +29,20 @@ class Backpack {
     }
 
     buildBot(blueprint, bot) {
+        this.time++;
         switch (bot) {
             case 0:
             case 1:
-                if (this.materials[0] >= blueprint.requiredMaterials[bot]) {
-                    this.materials[0] -= blueprint.requiredMaterials[bot];
-                    return true;
-                }
-                return false;
+                this.materials[0] -= blueprint.requiredMaterials[bot];
+                break;
             case 2:
             case 3:
-                if (this.materials[0] >= blueprint.requiredMaterials[bot][0] &&
-                    this.materials[bot - 1] >= blueprint.requiredMaterials[bot][1]) {
-                    this.materials[0] -= blueprint.requiredMaterials[bot][0];
-                    this.materials[bot - 1] -= blueprint.requiredMaterials[bot][1];
-                    return true;
-                }
-                return false;
+                this.materials[0] -= blueprint.requiredMaterials[bot][0];
+                this.materials[bot - 1] -= blueprint.requiredMaterials[bot][1];
+                break;
         }
+        this.collectMaterials();
+        this.bots[bot]++;
     }
 
     timeNeeded(blueprint, bot) {
@@ -100,13 +96,9 @@ class Backpack {
 function exploreBuildingSequence(blueprint, backpack, buildBot) {
     // buildBot = 0-3;
     let timeNeeded = backpack.timeNeeded(blueprint, buildBot);
-    // backpack.snapshots.push([[...backpack.bots], [...backpack.materials], backpack.time]);
     if (backpack.time + timeNeeded < 24) {
         backpack.timeSkip(timeNeeded);
-        backpack.time++;
         backpack.buildBot(blueprint, buildBot);
-        backpack.collectMaterials();
-        backpack.bots[buildBot]++;
     }
 
     if (backpack.time === 24) {
