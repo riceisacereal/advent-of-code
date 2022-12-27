@@ -15,20 +15,12 @@ class Backpack {
         this.bots = [1, 0, 0, 0];
         // Ore, Clay, Obsidian, Geode
         this.materials = [0, 0, 0, 0];
-
-        // TODO: remove after debug
-        this.snapshots = [];
     }
 
     copyBackpack(backpack) {
         this.time = backpack.time;
         this.bots = [...backpack.bots];
         this.materials = [...backpack.materials];
-
-        // TODO: remove after debug
-        for (let snap of backpack.snapshots) {
-            this.snapshots.push([[...snap[0]], [...snap[1]], snap[2]]);
-        }
     }
 
     buildBot(blueprint, bot) {
@@ -99,37 +91,13 @@ class Backpack {
 class GeodeTracker {
     constructor() {
         this.maxGeodes = 0;
-        this.optimalState = undefined;
     }
 
-    compareAndSet(backpack, duration) {
-        let n = backpack.timeSkipToEnd(duration);
+    compareAndSet(n) {
         if (n > this.maxGeodes) {
             this.maxGeodes = n;
-            for (let snap of backpack.snapshots) {
-                let geodes = snap[1][3];
-                if (geodes === 1) this.optimalState = snap;
-            }
+            // console.log(n);
         }
-    }
-
-    onPaceWithOptimal(backpack) {
-        if (this.optimalState === undefined) {
-            return true;
-        }
-
-        let snap;
-        for (let s of backpack.snapshots) {
-            let geodes = s[1][3];
-            if (geodes === 1) {
-                snap = s;
-                break;
-            }
-        }
-
-        let botsOnPace = true;
-        // for ()
-
     }
 }
 
@@ -140,22 +108,9 @@ function exploreBuildingSequence(blueprint, backpack, buildBot, geodeCount, dura
         backpack.buildBot(blueprint, buildBot);
     }
 
-    // TODO: remove after debug
-    let snapShot = [[...backpack.bots], [...backpack.materials], backpack.time];
-    backpack.snapshots.push(snapShot);
-
-    // Compare to previous best
-    // if (backpack.materials[3] === 1) {
-    //     if (!geodeCount.onPaceWithOptimal(backpack)) {
-    //         return;
-    //     }
-    // }
-
     // By the time bot is built can't gain anyway, stop
     if (backpack.time >= duration - 1) {
-        let count = backpack.timeSkipToEnd(duration);
-        if (count === 9) console.log(backpack.snapshots);
-        geodeCount.compareAndSet(backpack, duration);
+        geodeCount.compareAndSet(backpack.timeSkipToEnd(duration));
         return;
     }
 
@@ -169,9 +124,7 @@ function exploreBuildingSequence(blueprint, backpack, buildBot, geodeCount, dura
 
         // End of search
         if (backpack.time + backpack.timeNeeded(blueprint, bot) >= duration) {
-            let count = backpack.timeSkipToEnd(duration);
-            if (count === 9) console.log(backpack.snapshots);
-            geodeCount.compareAndSet(backpack, duration);
+            geodeCount.compareAndSet(backpack.timeSkipToEnd(duration));
             continue;
         }
 

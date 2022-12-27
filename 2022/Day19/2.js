@@ -1,10 +1,12 @@
 const fs = require("fs");
 const { Blueprint, GeodeTracker, getMaxGeode } = require("./shared");
 
-const input = fs.readFileSync("test.txt", "utf-8");
+const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split(/\r?\n/);
 
 function main() {
+    console.time("Time lapsed: ");
+
     let multiple = 1;
     for (let i = 1; i <= Math.min(3, lines.length); i++) {
         let geodeCount = new GeodeTracker();
@@ -14,6 +16,8 @@ function main() {
         multiple *= geodeCount.maxGeodes;
     }
     console.log(multiple);
+
+    console.timeEnd("Time lapsed: ");
 }
 
 main();
