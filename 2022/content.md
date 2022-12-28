@@ -54,3 +54,6 @@ Looping Tetris
 ### Day 18: Boiling Boulders
 2022-12-21\
 Positive negative search
+### Day 19: Not Enough Minerals
+2022-12-27\
+Incremental game nerd
