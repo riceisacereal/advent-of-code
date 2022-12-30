@@ -57,3 +57,6 @@ Positive negative search
 ### Day 19: Not Enough Minerals
 2022-12-27\
 Incremental game nerd
+### Day 20: Grove Positioning System
+2022-12-30\
+1-off

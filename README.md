@@ -12,5 +12,5 @@ Started: 2022-03-22
 Started: 2022-02-01
 
 ### 🌳 2022 - JavaScript
-38 ⭐\
+40 ⭐\
 Started: 2022-12-01
