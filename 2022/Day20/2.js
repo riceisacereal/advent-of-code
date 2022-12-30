@@ -5,9 +5,11 @@ const input = fs.readFileSync("input.txt", "utf-8");
 const lines = input.split(/\r?\n/);
 
 function main() {
-    let numberList = makeNumberList(lines, 1);
+    let numberList = makeNumberList(lines, 811589153);
 
-    decrypt(numberList);
+    for (let i = 0; i < 10; i++) {
+        decrypt(numberList);
+    }
     console.log(sumCoordinates(numberList));
 }
 
