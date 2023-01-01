@@ -60,3 +60,6 @@ Incremental game nerd
 ### Day 20: Grove Positioning System
 2022-12-30\
 1-off
+### Day 21: Monkey Math
+2023-01-02\
+Gradient descent my beloved
