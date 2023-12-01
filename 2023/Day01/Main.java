@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        String puzzleInput = "Day01/input.txt";
+        String puzzleInput = "2023/Day01/input.txt";
         partOne(puzzleInput);
         partTwo(puzzleInput);
     }
