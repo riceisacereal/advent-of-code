@@ -3,9 +3,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Main {
+public class PartOne {
     public static void main(String[] args) throws IOException {
-        String puzzleInput = "2023/Day02/test.txt";
+        String puzzleInput = "2023/Day02/input.txt";
         partOne(puzzleInput);
     }
 
@@ -19,11 +19,14 @@ public class Main {
         int greenMax = 13;
         int blueMax = 14;
 
+        // Split by "Game 1" : "6 red, 8 green, 8 blue; ..."
         String[] game = line.split(": ");
         int gameID = Integer.parseInt(game[0].substring(5));
-        String[] grabs = game[1].split("; ");
-        for (String cubeSet : grabs) {
+        // Iterate over "6 red, 8 green, 8 blue"; "4 green";...
+        for (String cubeSet : game[1].split("; ")) {
+            // Iterate over "6 red", "8 green", "8 blue"
             for (String cubeNum : cubeSet.split(", ")) {
+                // Split by "6" "red"
                 String[] cubes = cubeNum.split(" ");
                 int amount = Integer.parseInt(cubes[0]);
 

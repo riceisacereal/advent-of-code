@@ -14,16 +14,17 @@ public class PartTwo {
         return new Scanner(fr);
     }
 
-    public static int power(String line) {
+    public static int calculatePower(String line) {
         int redMax = 0;
         int greenMax = 0;
         int blueMax = 0;
 
-        String[] game = line.split(": ");
-        int gameID = Integer.parseInt(game[0].substring(5));
-        String[] grabs = game[1].split("; ");
+        // Get "6 red, 8 green, 8 blue"; "4 green";...
+        String[] grabs = line.split(": ")[1].split("; ");
         for (String cubeSet : grabs) {
+            // Iterate over "6 red", "8 green", "8 blue"
             for (String cubeNum : cubeSet.split(", ")) {
+                // Split by "6" "red"
                 String[] cubes = cubeNum.split(" ");
                 int amount = Integer.parseInt(cubes[0]);
 
@@ -32,7 +33,7 @@ public class PartTwo {
                     case "green" -> greenMax = Integer.max(greenMax, amount);
                     case "blue" -> blueMax = Integer.max(blueMax, amount);
                     default -> throw new IllegalArgumentException(
-                        "Could not identify: " + cubes[1]);
+                        "Could not identify cube colour: " + cubes[1]);
                 }
             }
         }
@@ -44,7 +45,7 @@ public class PartTwo {
         int total = 0;
         while(file.hasNextLine()){
             String line = file.nextLine();
-            total += power(line);
+            total += calculatePower(line);
         }
 
         return total;
