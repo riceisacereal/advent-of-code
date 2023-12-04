@@ -8,9 +8,12 @@ import java.util.List;
 // 497027 too low
 
 public class PartOne {
+    private static final String puzzleInput = "2023/Day03/input.txt";
+
     public static void main(String[] args) throws IOException {
-        String puzzleInput = "2023/Day03/input.txt";
-        partOne(puzzleInput);
+        List<String> lines = readFile(puzzleInput);
+        int result = parseInput(lines);
+        System.out.println(result);
     }
 
     public static List<String> readFile(String fileName) throws IOException {
@@ -18,25 +21,25 @@ public class PartOne {
     }
 
     public static Boolean isSymbol(int c) {
-        if (c == 46) {
-            return false;
-        } else return (c > 32 && c < 48) || (c > 57 && c < 65) || (c > 90 && c < 97) ||
-            (c > 122 && c < 127);
+        return c != 46 && (c <= 47 || c >= 58);
     }
 
-    public static int checkInclusion(List<String> lines, String line, int level, int start, int end,
-                                     int maxY, int maxX) {
-        int num = Integer.parseInt(line.substring(start, end));
+    public static Boolean isNumber(int c) {
+        return (c >= 48 && c <= 57);
+    }
+
+    public static Boolean checkInclusion(List<String> lines, int num, int level, int start, int end) {
+        int maxY = lines.size();
+        int maxX = lines.get(0).length();
         for (int y = Math.max(level - 1, 0); y < Math.min(level + 2, maxY); y++) {
             for (int x = Math.max(start - 1, 0); x < Math.min(end + 1, maxX); x++) {
                 int c = lines.get(y).charAt(x);
                 if (isSymbol(c)) {
-//                    System.out.println(num);
-                    return num;
+                    return true;
                 }
             }
         }
-        return 0;
+        return false;
     }
 
     public static int parseInput(List<String> lines) {
@@ -45,29 +48,25 @@ public class PartOne {
             String line = lines.get(i);
             for (int j = 0; j < line.length(); j++) {
                 char c = line.charAt(j);
-                if ((int) c > 47 && (int) c < 58) {
-                    int start = j;
-                    for (; j < line.length(); j++) {
-                        c = line.charAt(j);
-                        if (c == '.' || isSymbol(c)) {
-                            sumPartNum += checkInclusion(lines, line, i, start, j, lines.size(),
-                                line.length());
-                            break;
-                        }
-                        if (j + 1 == line.length()) {
-                            sumPartNum += checkInclusion(lines, line, i, start, line.length(),
-                                lines.size(), line.length());
-                        }
+                if (!isNumber(c)) {
+                    continue;
+                }
+
+                int start = j;
+                for (; j < line.length(); j++) {
+                    c = line.charAt(j);
+                    if (c == '.' || isSymbol(c)) {
+                        int num = Integer.parseInt(line.substring(start, j));
+                        if (checkInclusion(lines, num, i, start, j)) sumPartNum += num;
+                        break;
+                    }
+                    if (j + 1 == line.length()) {
+                        int num = Integer.parseInt(line.substring(start));
+                        if (checkInclusion(lines, num, i, start, line.length())) sumPartNum += num;
                     }
                 }
             }
         }
         return sumPartNum;
-    }
-
-    public static void partOne(String puzzleInput) throws IOException {
-        List<String> lines = readFile(puzzleInput);
-        int result = parseInput(lines);
-        System.out.println(result);
     }
 }
