@@ -28,7 +28,7 @@ public class PartOne {
         return (c >= 48 && c <= 57);
     }
 
-    public static Boolean checkInclusion(List<String> lines, int num, int level, int start, int end) {
+    public static Boolean checkInclusion(List<String> lines, int level, int start, int end) {
         int maxY = lines.size();
         int maxX = lines.get(0).length();
         for (int y = Math.max(level - 1, 0); y < Math.min(level + 2, maxY); y++) {
@@ -57,12 +57,12 @@ public class PartOne {
                     c = line.charAt(j);
                     if (c == '.' || isSymbol(c)) {
                         int num = Integer.parseInt(line.substring(start, j));
-                        if (checkInclusion(lines, num, i, start, j)) sumPartNum += num;
+                        if (checkInclusion(lines, i, start, j)) sumPartNum += num;
                         break;
                     }
                     if (j + 1 == line.length()) {
                         int num = Integer.parseInt(line.substring(start));
-                        if (checkInclusion(lines, num, i, start, line.length())) sumPartNum += num;
+                        if (checkInclusion(lines, i, start, line.length())) sumPartNum += num;
                     }
                 }
             }
