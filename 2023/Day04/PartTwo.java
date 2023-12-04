@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.List;
 
 public class PartTwo {
@@ -17,6 +16,7 @@ public class PartTwo {
         for (int i = 0; i < numCards; i++) {
             copies[i] = 1;
         }
+
         calculateWins(lines, wins);
         calculateCopies(wins, copies);
         int result = sumCopies(copies);
@@ -31,13 +31,10 @@ public class PartTwo {
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
 
-            String[] card = line.split(": ")[1].split(" \\| ");
-            int[] winNums = Arrays.stream(card[0].trim().split(" +"))
-                .mapToInt(Integer::parseInt)
-                .toArray();
-            int[] ownNums = Arrays.stream(card[1].trim().split(" +"))
-                .mapToInt(Integer::parseInt)
-                .toArray();
+            int[][] intArray = Shared.getIntArray(line);
+            int[] winNums = intArray[0];
+            int[] ownNums = intArray[1];
+
             for (int o : ownNums) {
                 for (int w : winNums) {
                     if (o == w) {
