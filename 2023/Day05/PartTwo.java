@@ -9,7 +9,7 @@ import java.util.List;
 // 393797665 too high
 
 public class PartTwo {
-    private static final String puzzleInput = "2023/Day05/test.txt";
+    private static final String puzzleInput = "2023/Day05/input.txt";
 
     public static void main(String[] args) throws Exception {
         List<String> lines = readFile(puzzleInput);
@@ -29,6 +29,8 @@ public class PartTwo {
         throws Exception {
         if (index >= allMaps.size()) {
             return start;
+        } else if (end <= allMaps.get(index).get(0)[1]) {
+            return splitSearch(allMaps, index + 1, start, end);
         }
 
         ArrayList<long[]> maps = allMaps.get(index);
@@ -41,15 +43,10 @@ public class PartTwo {
 
             // start [ start ] end
             // source ( sourceStart ) sourceEnd
-
             // O - forward original range
             // X - calculate destination range
             // R - redo using same index and range
-            if (end <= sourceStart) {
-                // No overlap [O] ()
-                // Use Original range
-                return splitSearch(allMaps, index + 1, start, end);
-            } else if (start >= sourceStart && end <= sourceEnd) {
+            if (start >= sourceStart && end <= sourceEnd) {
                 // Contained ( [X] )
                 return splitSearch(allMaps, index + 1, getDest(sourceStart, dest, start), getDest(sourceStart, dest, end));
             } else if (start < sourceStart && end > sourceEnd) {
@@ -90,5 +87,26 @@ public class PartTwo {
         }
 
         return Collections.min(locs);
+
+        // The following brute force code runs for 6 minutes but does give an answer,
+        // I was a fool to not sit through it and instead spent 5 hours rewriting a solution
+
+//        long minLoc = Long.MAX_VALUE;
+//        for (int i = 0; i < seeds.length; i += 2) {
+//            long start = seeds[i];
+//            long end = start + seeds[i + 1];
+//
+//            for (long j = start; j < end; j++) {
+//                long currentNum = j;
+//                for (ArrayList<long[]> section : allMaps) {
+//                    currentNum = getCorresponding(section, currentNum);
+//                }
+//                minLoc = Math.min(minLoc, currentNum);
+//            }
+//
+//            System.out.println("Processed one more seed");
+//        }
+//
+//        return minLoc;
     }
 }
