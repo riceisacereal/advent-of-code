@@ -29,12 +29,19 @@ public class PartTwo {
     public static int checkSecondNumber(int y, int x, int num) throws Exception {
         int existing = gears[y][x];
         if (existing == 0) {
+            // If no numbers have been found for that gear yet,
+            // place number in the coordinates of the gear
             gears[y][x] = num;
             return 0;
         } else if (existing > 0) {
+            // If a number has already been found,
+            // store a negative number, so we can catch an error
             gears[y][x] = -(existing * num);
             return existing * num;
         } else {
+            // Catch when more than 2 numbers are adjacent to a gear
+            // This never triggered though, so that's good
+            // Otherwise I would have had to rewrite a lot of code
             throw new Exception("More than two adjacent detected");
         }
     }
@@ -49,6 +56,7 @@ public class PartTwo {
             for (int x = Math.max(start - 1, 0); x < Math.min(end + 1, maxX); x++) {
                 int c = lines.get(y).charAt(x);
                 if (c == 42) {
+                    // If there is a gear around the number
                     return checkSecondNumber(y, x, num);
                 }
             }
@@ -63,12 +71,14 @@ public class PartTwo {
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
             for (int j = 0; j < line.length(); j++) {
+                // Find next number
                 char c = line.charAt(j);
                 if (!isNumber(c)) {
                     continue;
                 }
 
                 int start = j;
+                // Identify length of number
                 for (; j < line.length(); j++) {
                     c = line.charAt(j);
                     if (c == '.' || isSymbol(c)) {
