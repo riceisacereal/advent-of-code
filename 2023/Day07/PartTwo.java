@@ -5,6 +5,6 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class PartTwo {
-    private static final String puzzleInput = "2023/Day0_/test.txt";
+    private static final String puzzleInput = "2023/Day07/test.txt";
 
 }
