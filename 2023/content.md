@@ -86,3 +86,10 @@ humidity-to-location map:
 60 56 37
 56 93 4
 ```
+### Day 6: Wait For It
+2023-12-06\
+Frictionless spring-loaded car
+```text
+Time:      7  15   30
+Distance:  9  40  200
+```
