@@ -12,6 +12,12 @@ public class Main {
         List<String> lines = readFile(puzzleInput);
         System.out.println(partOne(lines));
         System.out.println(partTwo(lines));
+
+        /* I was told I could also use maths with the equation x * (y - x) > d
+        * where x is the charging time, and y is the total time, and d is the current record distance,
+        * and then you find the lower and upper bound for the equation x^2 - xy > d
+        * (which can be x^2 - xy = d + 1) a = 1, b = -y, c = -d - 1
+        * (y +- sqrt(y^2 + 4 * (d + 1)) / 2 */
     }
 
     public static List<String> readFile(String fileName) throws IOException {
