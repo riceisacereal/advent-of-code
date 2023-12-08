@@ -4,14 +4,20 @@ public class Node {
     private final String right;
     private Node leftNode;
     private Node rightNode;
+    private Boolean end;
 
     public Node(String line) {
         // AAA = (BBB, BBB)
         String[] a = line.split(" = ");
         this.self = a[0];
-        String[] b = a[1].replaceAll("\\(|\\)", "").split(", ");
+        this.end = this.self.charAt(2) == 'Z';
+        String[] b = a[1].replaceAll("[()]", "").split(", ");
         this.left = b[0];
         this.right = b[1];
+    }
+
+    public Boolean isEnd() {
+        return end;
     }
 
     public String getLeft() {
