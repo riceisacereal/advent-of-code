@@ -4,7 +4,7 @@ public class Node {
     private final String right;
     private Node leftNode;
     private Node rightNode;
-    private Boolean end;
+    private final Boolean end;
 
     public Node(String line) {
         // AAA = (BBB, BBB)

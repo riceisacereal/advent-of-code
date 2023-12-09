@@ -20,9 +20,9 @@ public class PartOne {
     }
 
     public static int parseInput(List<String> lines) {
-        int count = 0;
         String directions = lines.get(0);
 
+        // Parse all nodes into objects
         ArrayList<Node> nodes = new ArrayList<>();
         HashMap<String, Node> nodeMap = new HashMap<>();
         for (String line : lines.subList(2, lines.size())) {
@@ -31,6 +31,7 @@ public class PartOne {
             nodes.add(cur);
         }
 
+        // Map all node connections
         for (Node n : nodes) {
             n.setLeftNode(nodeMap.get(n.getLeft()));
             n.setRightNode(nodeMap.get(n.getRight()));
@@ -39,6 +40,7 @@ public class PartOne {
         Node end = nodeMap.get("ZZZ");
 
         Node n = start;
+        int count = 0;
         while (true) {
             for (int i = 0; i < directions.length(); i++) {
                 if (n == end) {

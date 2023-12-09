@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Stack;
 
 // 6692129108387828075880 too high
-// 6692129108387828075880
 
 public class PartTwo {
     private static final String puzzleInput = "2023/Day08/input.txt";
@@ -22,15 +20,6 @@ public class PartTwo {
 
     public static List<String> readFile(String fileName) throws IOException {
         return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
-    }
-
-    public static Boolean isAllEnd(ArrayList<Node> currentNodes) {
-        for (Node n : currentNodes) {
-            if (!n.isEnd()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public static long smallestCommonMultiple(long a, long b) {
@@ -65,33 +54,41 @@ public class PartTwo {
             nodes.add(cur);
         }
 
-        ArrayList<Node> currentNodes = new ArrayList<>();
+        ArrayList<Node> startingNodes = new ArrayList<>();
         for (Node n : nodes) {
             n.setLeftNode(nodeMap.get(n.getLeft()));
             n.setRightNode(nodeMap.get(n.getRight()));
             if (n.getSelf().charAt(2) == 'A') {
-                currentNodes.add(n);
+                startingNodes.add(n);
             }
         }
 
         ArrayList<Integer> loopSizes = new ArrayList<>();
-        for (Node n : currentNodes) {
-            ArrayList<String> visited = new ArrayList<>();
+        for (Node n : startingNodes) {
+            // Create list of HashSets for optimisation
+            ArrayList<HashSet<String>> visited = new ArrayList<>();
+            for (int i = 0; i < directions.length(); i++)  {
+                visited.add(new HashSet<>());
+            }
+
             Node current = n;
+            int count = 0;
             int index = 0;
-            while (!visited.contains(current.getSelf() + index)) {
-                visited.add(current.getSelf() + index);
+            while (!visited.get(index).contains(current.getSelf() + index)) {
+                visited.get(index).add(current.getSelf() + index);
                 switch (directions.charAt(index)) {
                     case 'L' -> current = current.getLeftNode();
                     case 'R' -> current = current.getRightNode();
                 }
-                index = (index + 1) % directions.length();
+                count++;
+                index = count % directions.length();
             }
-            loopSizes.add(visited.size() - visited.indexOf(current.getSelf() + index));
+            // Assumes that the start of the loop is before the end of the first iteration
+            // of the directions - which is the case with the input
+            loopSizes.add(count - index);
         }
 
-        // calculate LCM
-        System.out.println(loopSizes);
+        // Calculate LCM
         return scmFold(loopSizes);
     }
 }
