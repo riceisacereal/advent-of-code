@@ -103,3 +103,25 @@ KK677 28
 KTJJT 220
 QQQJA 483
 ```
+### Day 8: Haunted Wasteland
+2023-12-08\
+Not Chinese Remainder Theorem, but LCM
+```text
+RL
+
+AAA = (BBB, CCC)
+BBB = (DDD, EEE)
+CCC = (ZZZ, GGG)
+DDD = (DDD, DDD)
+EEE = (EEE, EEE)
+GGG = (GGG, GGG)
+ZZZ = (ZZZ, ZZZ)
+```
+### Day 9: Mirage Maintenance
+2023-12-09\
+Oasis sand instability predictions
+```text
+0 3 6 9 12 15
+1 3 6 10 15 21
+10 13 16 21 30 45
+```

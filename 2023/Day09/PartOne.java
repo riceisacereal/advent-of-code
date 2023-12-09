@@ -34,7 +34,9 @@ public class PartOne {
         for (int i = 0; i < history.size() - 1; i++) {
             differences.add(history.get(i + 1) - history.get(i));
         }
-        return history.get(history.size() - 1) + getPrediction(differences);
+        // For part 1 this would be:
+        // history.get(history.size() - 1) + getPrediction(differences);
+        return history.get(0) - getPrediction(differences);
     }
 
     public static long parseInput(List<String> lines) {
