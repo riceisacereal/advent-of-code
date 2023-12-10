@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 public class PartTwo {
     private static final String puzzleInput = "2023/Day10/input.txt";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         List<String> lines = readFile(puzzleInput);
         int result = parseInput(lines);
         System.out.println(result);
@@ -23,30 +23,15 @@ public class PartTwo {
         return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
     }
 
-    public static int parseInput(List<String> lines) {
+    public static int parseInput(List<String> lines) throws Exception {
         int maxX = lines.get(0).length();
         int maxY = lines.size();
 
-        Pipe[][] pipeMap = new Pipe[maxY][maxX];
-        int[] startLoc = null;
-        for (int i = 0; i < maxY; i++) {
-            String line = lines.get(i);
-            for (int j = 0; j < maxX; j++) {
-                char c = line.charAt(j);
-                if (c != '.') {
-                    if (c == 'S') {
-                        // Found starting location
-                        startLoc = new int[] {i, j};
-                        continue;
-                    }
-                    Pipe p = new Pipe(c);
-                    pipeMap[i][j] = p;
-                }
-            }
-        }
-        // Make starting pipe
-        Pipe startingPipe = new Pipe(Shared.getStartChar(startLoc[0], startLoc[1], lines));
-        pipeMap[startLoc[0]][startLoc[1]] = startingPipe;
+        Pipe[][] pipeMap = Shared.getPipeMap(lines);
+        // Get starting pipe
+        int[] startLoc = Shared.getStartingPipe(lines);
+        Pipe startingPipe = pipeMap[startLoc[0]][startLoc[1]];
+
         // Find pipes contained in the loop
         int[] currentPipe = new int[] {startLoc[0], startLoc[1]};
         int currentDirection = (startingPipe.getRandomStart() + 2) % 4; // Use opposite for the loop

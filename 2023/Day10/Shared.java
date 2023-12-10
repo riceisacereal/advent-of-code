@@ -66,4 +66,54 @@ public class Shared {
             System.out.println(s);
         }
     }
+
+    public static Pipe[][] getPipeMap(List<String> lines) {
+        int maxY = lines.size();
+        int maxX = lines.get(0).length();
+
+        Pipe[][] pipeMap = new Pipe[maxY][maxX];
+        for (int i = 0; i < maxY; i++) {
+            String line = lines.get(i);
+            for (int j = 0; j < maxX; j++) {
+                char c = line.charAt(j);
+                if (c != '.') {
+                    if (c == 'S') {
+                        c = getStartChar(i, j, lines);
+                    }
+                    Pipe p = new Pipe(c);
+                    pipeMap[i][j] = p;
+                }
+            }
+        }
+        return pipeMap;
+    }
+
+    public static int[] getStartingPipe(List<String> lines) throws Exception {
+        int maxY = lines.size();
+        int maxX = lines.get(0).length();
+
+        for (int i = 0; i < maxY; i++) {
+            String line = lines.get(i);
+            for (int j = 0; j < maxX; j++) {
+                char c = line.charAt(j);
+                if (c == 'S') {
+                    return new int[] {i, j};
+                }
+            }
+        }
+        throw new Exception("Could not find start");
+    }
+
+    public static void setPipeLoop(int[] startLoc, Pipe startingPipe, Pipe[][] pipeMap) {
+        // Find pipes contained in the loop
+        int[] currentPipe = new int[] {startLoc[0], startLoc[1]};
+        int currentDirection = (startingPipe.getRandomStart() + 2) % 4; // Use opposite for the loop
+        do {
+            Pipe p = pipeMap[currentPipe[0]][currentPipe[1]];
+            p.setPartOfLoop();
+            currentDirection = p.getNextDirection((currentDirection + 2) % 4);
+            currentPipe[1] = currentPipe[1] + Shared.directionDisplacement[currentDirection][1];
+            currentPipe[0] = currentPipe[0] + Shared.directionDisplacement[currentDirection][0];
+        } while (currentPipe[0] != startLoc[0] || currentPipe[1] != startLoc[1]);
+    }
 }
