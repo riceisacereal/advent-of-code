@@ -1,69 +1,67 @@
+import static java.util.Map.entry;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PartOne {
     private static final String puzzleInput = "2023/Day10/input.txt";
+    private static final int[][] directionDisplacement = new int[][] {{-1, 0}, {0, 1}, {1, 0}, {0, -1}};
+    // The following two variables are only needed for determining the starting symbol
+    private static final String[] connectingShapes = new String[] {"|7F", "-J7", "|JL", "-LF"};
+    private static final Map<String, Character> connectionToSymbol = Map.ofEntries(
+        entry("02", '|'),
+        entry("13", '-'),
+        entry("01", 'L'),
+        entry("12", 'F'),
+        entry("23", '7'),
+        entry("03", 'J')
+    );
 
     public static void main(String[] args) throws IOException {
         List<String> lines = readFile(puzzleInput);
         int result = parseInput(lines);
-        System.out.println(result / 2);
+        System.out.println(result);
     }
 
     public static List<String> readFile(String fileName) throws IOException {
         return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
     }
 
-    public static Pipe getStartConnect(int y, int x, Pipe[][] pipeMap) {
-        String connect = "";
-        // determine shape of start
-        // check north
-        if (y > 0 && pipeMap[y - 1][x] != null) {
-            if (pipeMap[y - 1][x].getConnect().contains("S")) {
-                connect += "N";
+    public static char getStartChar(int y, int x, List<String> lines) {
+        StringBuilder connection = new StringBuilder();
+        int maxX = lines.get(0).length();
+        int maxY = lines.size();
+        for (int i = 0; i < 4; i++) {
+            int newX = x + directionDisplacement[i][1];
+            int newY = y + directionDisplacement[i][0];
+            if (newX >= 0 && newX < maxX && newY >= 0 && newY < maxY) {
+                char currentChar = lines.get(newY).charAt(newX);
+                if (connectingShapes[i].contains(currentChar + "")) {
+                    connection.append(i);
+                }
             }
         }
-        // check east
-        if (x < pipeMap[0].length - 1 && pipeMap[y][x + 1] != null) {
-            if (pipeMap[y][x + 1].getConnect().contains("W")) {
-                connect += "E";
-            }
-        }
-        // check south
-        if (y < pipeMap.length - 1 && pipeMap[y + 1][x] != null) {
-            if (pipeMap[y + 1][x].getConnect().contains("N")) {
-                connect += "S";
-            }
-        }
-        // check west
-        if (x > 0 && pipeMap[y][x - 1] != null) {
-            if (pipeMap[y][x - 1].getConnect().contains("E")) {
-                connect += "W";
-            }
-        }
-
-        Pipe p = new Pipe('S');
-        p.setConnect(connect);
-        return p;
+        return connectionToSymbol.get(connection.toString());
     }
 
     public static int parseInput(List<String> lines) {
-        int points = 0;
+        int x = lines.get(0).length();
+        int y = lines.size();
 
-        Pipe[][] pipeMap = new Pipe[lines.size()][lines.get(0).length()];
-        int[] start = null;
-        for (int i = 0; i < lines.size(); i++) {
+        Pipe[][] pipeMap = new Pipe[y][x];
+        int[] startLoc = null;
+        for (int i = 0; i < y; i++) {
             String line = lines.get(i);
-            char[] pipes = line.toCharArray();
-            for (int j = 0; j < line.length(); j++) {
-                char c = pipes[j];
+            for (int j = 0; j < x; j++) {
+                char c = line.charAt(j);
                 if (c != '.') {
                     if (c == 'S') {
-                        start = new int[] {i, j};
+                        // Found starting location
+                        startLoc = new int[] {i, j};
                         continue;
                     }
                     Pipe p = new Pipe(c);
@@ -71,32 +69,22 @@ public class PartOne {
                 }
             }
         }
+        // Make starting pipe
+        Pipe startingPipe = new Pipe(getStartChar(startLoc[0], startLoc[1], lines));
+        pipeMap[startLoc[0]][startLoc[1]] = startingPipe;
 
-        HashMap<String, String> opposite = new HashMap<>();
-        opposite.put("N", "S");
-        opposite.put("S", "N");
-        opposite.put("E", "W");
-        opposite.put("W", "E");
-        // make start pipe and set shape
-        Pipe startingPipe = getStartConnect(start[0], start[1], pipeMap);
-        pipeMap[start[0]][start[1]] = startingPipe;
-
-        int[] currentPipe = new int[] {start[0], start[1]};
-        String currentDirection = opposite.get(startingPipe.getConnect().substring(0, 1));
-
+        // Prepare iterative loop traversing
+        int pipes = 0;
+        int[] currentPipe = new int[] {startLoc[0], startLoc[1]};
+        int currentDirection = (startingPipe.getRandomStart() + 2) % 4; // Use opposite for the loop
         do {
             Pipe p = pipeMap[currentPipe[0]][currentPipe[1]];
-            currentDirection = p.getNextDirection(opposite.get(currentDirection));
-            switch (currentDirection) {
-                case "N" -> currentPipe[0]--;
-                case "E" -> currentPipe[1]++;
-                case "S" -> currentPipe[0]++;
-                case "W" -> currentPipe[1]--;
-                default -> System.out.println("Unrecognized direction: " + currentDirection);
-            }
-            points++;
-        } while (currentPipe[0] != start[0] || currentPipe[1] != start[1]);
+            currentDirection = p.getNextDirection((currentDirection + 2) % 4);
+            currentPipe[1] = currentPipe[1] + directionDisplacement[currentDirection][1];
+            currentPipe[0] = currentPipe[0] + directionDisplacement[currentDirection][0];
+            pipes++;
+        } while (currentPipe[0] != startLoc[0] || currentPipe[1] != startLoc[1]);
 
-        return points;
+        return pipes / 2;
     }
 }

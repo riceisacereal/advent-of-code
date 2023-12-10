@@ -1,29 +1,41 @@
-class Pipe {
-    //    public static HashMap<Character, String> shapeMapConnect = new HashMap() {
-//        '|':
-//    };
-    private char pipe;
-    private String connect;
-    private Boolean partOfLoop = false;
+import static java.util.Map.entry;
+import java.util.Map;
 
-    /*    N
-     * W     E
-     *    S
-     * */
+class Pipe {
+    //     N 0
+    // W 3     E 1
+    //     S 2
+    //
+    // The magic number is the sum of the directions which are connected
+    // This way we can get the other direction by subtracting the incoming side from the magic number
+    public static Map<Character, Integer> pipeToMagicNum = Map.ofEntries(
+        entry('|', 2),
+        entry('-', 4),
+        entry('L', 1),
+        entry('F', 3),
+        entry('7', 5),
+        entry('J', 3)
+    );
+    // Only needed one time to start the loop
+    public static Map<Character, Integer> randomStart = Map.ofEntries(
+        entry('|', 0), // 0 or 2
+        entry('-', 1), // 1 or 3
+        entry('L', 0), // 0 or 1
+        entry('F', 1), // 1 or 2
+        entry('7', 2), // 2 or 3
+        entry('J', 0)  // 0 or 3
+    );
+    private final char pipe;
+    private final int pipeMagicNum;
+    private Boolean partOfLoop = false;
 
     public Pipe(char p) {
         this.pipe = p;
-        // TODO: make into hashmap
-        switch (p) {
-            case '|' -> this.connect = "NS";
-            case '-' -> this.connect = "EW";
-            case 'L' -> this.connect = "NE";
-            case 'J' -> this.connect = "NW";
-            case '7' -> this.connect = "SW";
-            case 'F' -> this.connect = "ES";
-            case 'S' -> this.connect = "";
-            default -> System.out.println("Unexpected symbol: " + p);
-        }
+        this.pipeMagicNum = pipeToMagicNum.get(p);
+    }
+
+    public int getRandomStart() {
+        return randomStart.get(this.pipe);
     }
 
     public void setPartOfLoop() {
@@ -34,20 +46,7 @@ class Pipe {
         return partOfLoop;
     }
 
-    public String getConnect() {
-        return connect;
-    }
-
-    public void setConnect(String connect) {
-        this.connect = connect;
-    }
-
-    public String getNextDirection(String direction) {
-        return this.connect.replaceAll(direction, "");
-    }
-
-    @Override
-    public String toString() {
-        return "" + pipe;
+    public int getNextDirection(int incoming) {
+        return pipeMagicNum - incoming;
     }
 }
