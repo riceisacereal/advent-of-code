@@ -125,3 +125,17 @@ Oasis sand instability predictions
 1 3 6 10 15 21
 10 13 16 21 30 45
 ```
+### Day 10: Pipe Maze
+2023-12-10\
+How does Photoshop lasso tool do it?
+```text
+...........
+.S-------7.
+.|F-----7|.
+.||.....||.
+.||.....||.
+.|L-7.F-J|.
+.|..|.|..|.
+.L--J.L--J.
+...........
+```
