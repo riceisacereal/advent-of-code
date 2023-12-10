@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PartOne {
+public class Main {
     private static final String puzzleInput = "2023/Day09/input.txt";
 
     public static void main(String[] args) throws IOException {
