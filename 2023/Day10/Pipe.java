@@ -46,6 +46,10 @@ class Pipe {
         return partOfLoop;
     }
 
+    public char getPipe() {
+        return pipe;
+    }
+
     public int getNextDirection(int incoming) {
         return pipeMagicNum - incoming;
     }

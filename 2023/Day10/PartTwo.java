@@ -2,10 +2,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,50 +23,20 @@ public class PartTwo {
         return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
     }
 
-    public static Pipe getStartConnect(int y, int x, Pipe[][] pipeMap) {
-        String connect = "";
-        // determine shape of start
-        // check north
-        if (y > 0 && pipeMap[y - 1][x] != null) {
-            if (pipeMap[y - 1][x].getConnect().contains("S")) {
-                connect += "N";
-            }
-        }
-        // check east
-        if (x < pipeMap[0].length - 1 && pipeMap[y][x + 1] != null) {
-            if (pipeMap[y][x + 1].getConnect().contains("W")) {
-                connect += "E";
-            }
-        }
-        // check south
-        if (y < pipeMap.length - 1 && pipeMap[y + 1][x] != null) {
-            if (pipeMap[y + 1][x].getConnect().contains("N")) {
-                connect += "S";
-            }
-        }
-        // check west
-        if (x > 0 && pipeMap[y][x - 1] != null) {
-            if (pipeMap[y][x - 1].getConnect().contains("E")) {
-                connect += "W";
-            }
-        }
-
-        Pipe p = new Pipe('S');
-        p.setConnect(connect);
-        return p;
-    }
-
     public static int parseInput(List<String> lines) {
-        Pipe[][] pipeMap = new Pipe[lines.size()][lines.get(0).length()];
-        int[] start = null;
-        for (int i = 0; i < lines.size(); i++) {
+        int maxX = lines.get(0).length();
+        int maxY = lines.size();
+
+        Pipe[][] pipeMap = new Pipe[maxY][maxX];
+        int[] startLoc = null;
+        for (int i = 0; i < maxY; i++) {
             String line = lines.get(i);
-            char[] pipes = line.toCharArray();
-            for (int j = 0; j < line.length(); j++) {
-                char c = pipes[j];
+            for (int j = 0; j < maxX; j++) {
+                char c = line.charAt(j);
                 if (c != '.') {
                     if (c == 'S') {
-                        start = new int[] {i, j};
+                        // Found starting location
+                        startLoc = new int[] {i, j};
                         continue;
                     }
                     Pipe p = new Pipe(c);
@@ -77,71 +44,46 @@ public class PartTwo {
                 }
             }
         }
-
-        HashMap<String, String> opposite = new HashMap<>();
-        opposite.put("N", "S");
-        opposite.put("S", "N");
-        opposite.put("E", "W");
-        opposite.put("W", "E");
-        // make start pipe and set shape
-        Pipe startingPipe = getStartConnect(start[0], start[1], pipeMap);
-        pipeMap[start[0]][start[1]] = startingPipe;
-
-        int[] currentPipe = new int[] {start[0], start[1]};
-        String currentDirection = opposite.get(startingPipe.getConnect().substring(0, 1));
-
-        ArrayList<char[]> convertedLines = new ArrayList<>();
-        for (String line : lines) {
-            convertedLines.add(line
-                .replaceAll("\\|", "│")
-                .replaceAll("-", "─")
-                .replaceAll("J", "┘")
-                .replaceAll("7", "┐")
-                .replaceAll("L", "└")
-                .replaceAll("F", "┌").toCharArray());
-        }
-        HashMap<String, Character> connectToChar = new HashMap<>();
-        connectToChar.put("NS", '│');
-        connectToChar.put("EW", '─');
-        connectToChar.put("NW", '┘');
-        connectToChar.put("SW", '┐');
-        connectToChar.put("NE", '└');
-        connectToChar.put("ES", '┌');
-        convertedLines.get(start[0])[start[1]] = connectToChar.get(startingPipe.getConnect());
-
+        // Make starting pipe
+        Pipe startingPipe = new Pipe(Shared.getStartChar(startLoc[0], startLoc[1], lines));
+        pipeMap[startLoc[0]][startLoc[1]] = startingPipe;
+        // Find pipes contained in the loop
+        int[] currentPipe = new int[] {startLoc[0], startLoc[1]};
+        int currentDirection = (startingPipe.getRandomStart() + 2) % 4; // Use opposite for the loop
         do {
             Pipe p = pipeMap[currentPipe[0]][currentPipe[1]];
             p.setPartOfLoop();
-//            convertedLines.get(currentPipe[0])[currentPipe[1]] = '▒';
-            currentDirection = p.getNextDirection(opposite.get(currentDirection));
-            switch (currentDirection) {
-                case "N" -> currentPipe[0]--;
-                case "E" -> currentPipe[1]++;
-                case "S" -> currentPipe[0]++;
-                case "W" -> currentPipe[1]--;
-                default -> System.out.println("Unrecognized direction: " + currentDirection);
-            }
-        } while (currentPipe[0] != start[0] || currentPipe[1] != start[1]);
+            currentDirection = p.getNextDirection((currentDirection + 2) % 4);
+            currentPipe[1] = currentPipe[1] + Shared.directionDisplacement[currentDirection][1];
+            currentPipe[0] = currentPipe[0] + Shared.directionDisplacement[currentDirection][0];
+        } while (currentPipe[0] != startLoc[0] || currentPipe[1] != startLoc[1]);
 
-        int points = 0;
-        for (int i = 0; i < lines.size(); i++) {
-            char[] line = convertedLines.get(i);
-            // detect open loop and close loop
-            // open loop can be |, L7, L---7, FJ, F----J
-
-            boolean[] partOfLoop = new boolean[line.length];
-            for (int j = 0; j < line.length; j++) {
-                if (pipeMap[i][j] != null && pipeMap[i][j].isPartOfLoop()) {
-                    partOfLoop[j] = true;
+        // Convert to all ground + better map representation with box characters
+        char[][] convertedLines = new char[maxY][maxX];
+        for (int i = 0; i < maxY; i++) {
+            for (int j = 0; j < maxX; j++) {
+                Pipe p = pipeMap[i][j];
+                if (p != null && p.isPartOfLoop()) {
+                    convertedLines[i][j] = Shared.betterMapRep.get(p.getPipe());
+                } else {
+                    convertedLines[i][j] = '.';
                 }
             }
+        }
 
-            int[] partOfRegex = new int[line.length];
-            Pattern pattern = Pattern.compile("│|(┌─*┘)|(└─*┐)"); //(L-*)|(-*J)|(F-*)|(-*7)
-            Matcher matcher = pattern.matcher(new String(line));
+        // Scan per line from left to right the enclosed spaces
+        int points = 0;
+        for (int i = 0; i < maxY; i++) {
+            String line = new String(convertedLines[i]);
 
-            // Check all occurrences
+            // Match edges of pipe loop with regex
+            // Detect open loop and close loop
+            int[] partOfRegex = new int[line.length()];
+            Pattern pattern = Pattern.compile("│|(┌─*┘)|(└─*┐)");
+            Matcher matcher = pattern.matcher(line);
+            // Label all starting and ending pipes
             int startLabel = 0;
+            // https://stackoverflow.com/a/8938549
             while (matcher.find()) {
                 startLabel++;
                 for (int j = matcher.start(); j < matcher.end(); j++) {
@@ -149,32 +91,23 @@ public class PartTwo {
                 }
             }
 
-            boolean loopOpen = false;
             int count = 0;
             int currentLabel = 0;
-            for (int j = 0; j < line.length; j++) {
-                // part of loop but not part of regex - error or just an edge which can be ignored
-                // not part of loop but part of regex - random pipes - count
-                // not part of loop and not part of regex - ground/random pipes - count
-
-                // toggle open when regex
-                if (partOfLoop[j] && (partOfRegex[j] >= 1 && partOfRegex[j] != currentLabel)) {
-                    // Part of the loop - get rid of random pipes
-                    //
-                    // toggle loop
+            boolean loopOpen = false;
+            for (int j = 0; j < maxX; j++) {
+                if (partOfRegex[j] > currentLabel) {
+                    // Toggle loop when new label encountered
                     loopOpen = !loopOpen;
-                    currentLabel = partOfRegex[j];
-                } else if (!partOfLoop[j] && loopOpen) {
-                    convertedLines.get(i)[j] = 'X';
+                    currentLabel++;
+                } else if (convertedLines[i][j] == '.' && loopOpen) {
+                    // If loop open can still encounter edges ┌─┐ └─┘ which shouldn't be counted
+                    convertedLines[i][j] = 'X';
                     count++;
                 }
             }
             points += count;
         }
-
-        for (char[] c : convertedLines) {
-            System.out.println(new String(c));
-        }
+        Shared.printMap(convertedLines);
 
         return points;
     }
