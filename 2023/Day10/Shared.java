@@ -41,32 +41,6 @@ public class Shared {
         return connectionToSymbol.get(connection.toString());
     }
 
-    public static void printMap(String[] convertedLines) {
-        for (String line : convertedLines) {
-            String s = line
-                .replaceAll("\\|", "│")
-                .replaceAll("-", "─")
-                .replaceAll("J", "┘")
-                .replaceAll("7", "┐")
-                .replaceAll("L", "└")
-                .replaceAll("F", "┌");
-            System.out.println(s);
-        }
-    }
-
-    public static void printMap(char[][] convertedLines) {
-        for (char[] line : convertedLines) {
-            String s = new String(line)
-                .replaceAll("\\|", "│")
-                .replaceAll("-", "─")
-                .replaceAll("J", "┘")
-                .replaceAll("7", "┐")
-                .replaceAll("L", "└")
-                .replaceAll("F", "┌");
-            System.out.println(s);
-        }
-    }
-
     public static Pipe[][] getPipeMap(List<String> lines) {
         int maxY = lines.size();
         int maxX = lines.get(0).length();
@@ -106,14 +80,41 @@ public class Shared {
 
     public static void setPipeLoop(int[] startLoc, Pipe startingPipe, Pipe[][] pipeMap) {
         // Find pipes contained in the loop
-        int[] currentPipe = new int[] {startLoc[0], startLoc[1]};
+        Pipe p = startingPipe;
+        int[] nextPipe = new int[] {startLoc[0], startLoc[1]};
         int currentDirection = (startingPipe.getRandomStart() + 2) % 4; // Use opposite for the loop
         do {
-            Pipe p = pipeMap[currentPipe[0]][currentPipe[1]];
             p.setPartOfLoop();
             currentDirection = p.getNextDirection((currentDirection + 2) % 4);
-            currentPipe[1] = currentPipe[1] + Shared.directionDisplacement[currentDirection][1];
-            currentPipe[0] = currentPipe[0] + Shared.directionDisplacement[currentDirection][0];
-        } while (currentPipe[0] != startLoc[0] || currentPipe[1] != startLoc[1]);
+            nextPipe[1] = nextPipe[1] + Shared.directionDisplacement[currentDirection][1];
+            nextPipe[0] = nextPipe[0] + Shared.directionDisplacement[currentDirection][0];
+            p = pipeMap[nextPipe[0]][nextPipe[1]];
+        } while (p != startingPipe);
+    }
+
+    public static void printMap(String[] convertedLines) {
+        for (String line : convertedLines) {
+            String s = line
+                .replaceAll("\\|", "│")
+                .replaceAll("-", "─")
+                .replaceAll("J", "┘")
+                .replaceAll("7", "┐")
+                .replaceAll("L", "└")
+                .replaceAll("F", "┌");
+            System.out.println(s);
+        }
+    }
+
+    public static void printMap(char[][] convertedLines) {
+        for (char[] line : convertedLines) {
+            String s = new String(line)
+                .replaceAll("\\|", "│")
+                .replaceAll("-", "─")
+                .replaceAll("J", "┘")
+                .replaceAll("7", "┐")
+                .replaceAll("L", "└")
+                .replaceAll("F", "┌");
+            System.out.println(s);
+        }
     }
 }

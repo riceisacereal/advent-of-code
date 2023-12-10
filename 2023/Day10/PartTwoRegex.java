@@ -23,21 +23,11 @@ public class PartTwoRegex {
         int maxY = lines.size();
         int maxX = lines.get(0).length();
 
+        // Build pipe map
         Pipe[][] pipeMap = Shared.getPipeMap(lines);
-        // Get starting pipe
         int[] startLoc = Shared.getStartingPipe(lines);
         Pipe startingPipe = pipeMap[startLoc[0]][startLoc[1]];
-
-        // Prepare iterative loop traversing
-        int[] currentPipe = new int[] {startLoc[0], startLoc[1]};
-        int currentDirection = (startingPipe.getRandomStart() + 2) % 4; // Use opposite for the loop
-        do {
-            Pipe p = pipeMap[currentPipe[0]][currentPipe[1]];
-            p.setPartOfLoop();
-            currentDirection = p.getNextDirection((currentDirection + 2) % 4);
-            currentPipe[1] = currentPipe[1] + Shared.directionDisplacement[currentDirection][1];
-            currentPipe[0] = currentPipe[0] + Shared.directionDisplacement[currentDirection][0];
-        } while (currentPipe[0] != startLoc[0] || currentPipe[1] != startLoc[1]);
+        Shared.setPipeLoop(startLoc, startingPipe, pipeMap);
 
         // Convert to all ground + better map representation with box characters
         char[][] convertedLines = new char[maxY][maxX];
@@ -54,6 +44,8 @@ public class PartTwoRegex {
 
         Shared.printMap(convertedLines);
 
+        // Replace border pipes with single border, and delete edges
+        // Resolve borders by removing all border pairs
         String[] regexMap = new String[maxY];
         for (int i = 0; i < maxY; i++) {
             char[] line = convertedLines[i];
@@ -66,6 +58,7 @@ public class PartTwoRegex {
 
         Shared.printMap(regexMap);
 
+        // Count enclosed spaces
         int enclosed = 0;
         for (String s : regexMap) {
             Pattern pattern = Pattern.compile("│\\.*│");

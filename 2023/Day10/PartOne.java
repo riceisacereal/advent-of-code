@@ -24,16 +24,17 @@ public class PartOne {
         Pipe startingPipe = pipeMap[startLoc[0]][startLoc[1]];
 
         // Prepare iterative loop traversing
+        Pipe p = startingPipe;
         int pipes = 0;
-        int[] currentPipe = new int[] {startLoc[0], startLoc[1]};
+        int[] nextPipe = new int[] {startLoc[0], startLoc[1]};
         int currentDirection = (startingPipe.getRandomStart() + 2) % 4; // Use opposite for the loop
         do {
-            Pipe p = pipeMap[currentPipe[0]][currentPipe[1]];
             currentDirection = p.getNextDirection((currentDirection + 2) % 4);
-            currentPipe[1] = currentPipe[1] + Shared.directionDisplacement[currentDirection][1];
-            currentPipe[0] = currentPipe[0] + Shared.directionDisplacement[currentDirection][0];
+            nextPipe[1] = nextPipe[1] + Shared.directionDisplacement[currentDirection][1];
+            nextPipe[0] = nextPipe[0] + Shared.directionDisplacement[currentDirection][0];
+            p = pipeMap[nextPipe[0]][nextPipe[1]];
             pipes++;
-        } while (currentPipe[0] != startLoc[0] || currentPipe[1] != startLoc[1]);
+        } while (p != startingPipe);
 
         return pipes / 2;
     }

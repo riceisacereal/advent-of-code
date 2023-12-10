@@ -27,21 +27,11 @@ public class PartTwo {
         int maxX = lines.get(0).length();
         int maxY = lines.size();
 
+        // Build pipe map
         Pipe[][] pipeMap = Shared.getPipeMap(lines);
-        // Get starting pipe
         int[] startLoc = Shared.getStartingPipe(lines);
         Pipe startingPipe = pipeMap[startLoc[0]][startLoc[1]];
-
-        // Find pipes contained in the loop
-        int[] currentPipe = new int[] {startLoc[0], startLoc[1]};
-        int currentDirection = (startingPipe.getRandomStart() + 2) % 4; // Use opposite for the loop
-        do {
-            Pipe p = pipeMap[currentPipe[0]][currentPipe[1]];
-            p.setPartOfLoop();
-            currentDirection = p.getNextDirection((currentDirection + 2) % 4);
-            currentPipe[1] = currentPipe[1] + Shared.directionDisplacement[currentDirection][1];
-            currentPipe[0] = currentPipe[0] + Shared.directionDisplacement[currentDirection][0];
-        } while (currentPipe[0] != startLoc[0] || currentPipe[1] != startLoc[1]);
+        Shared.setPipeLoop(startLoc, startingPipe, pipeMap);
 
         // Convert to all ground + better map representation with box characters
         char[][] convertedLines = new char[maxY][maxX];
