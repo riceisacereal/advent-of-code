@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class PartOne {
+public class Main {
     private static final String puzzleInput = "2023/Day11/input.txt";
 
     public static void main(String[] args) throws IOException {
@@ -32,6 +32,7 @@ public class PartOne {
         int rows = lines.size();
         int cols = lines.get(0).length();
 
+        // Get coordinates of all galaxies
         ArrayList<int[]> galaxyCoordinates = new ArrayList<>();
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < cols; col++) {
@@ -42,6 +43,7 @@ public class PartOne {
             }
         }
 
+        // Find empty rows and expand coordinates
         int rowOffset = 0;
         for (int row = 0; row < rows; row++) {
             int newIndex = row + rowOffset;
@@ -55,6 +57,7 @@ public class PartOne {
             }
         }
 
+        // Find empty columns and expand
         int colOffset = 0;
         for (int col = 0; col < cols; col++) {
             int newIndex = col + colOffset;
@@ -68,12 +71,9 @@ public class PartOne {
             }
         }
 
+        // Sum distances between every pair
         long distances = 0;
-        for (int n = 0; n < galaxyCoordinates.size(); n++) {
-            if (n == galaxyCoordinates.size() - 1) {
-                break;
-            }
-
+        for (int n = 0; n < galaxyCoordinates.size() - 1; n++) {
             int[] thisGalaxy = galaxyCoordinates.get(n);
             for (int next = n + 1; next < galaxyCoordinates.size(); next++) {
                 int[] nextGalaxy = galaxyCoordinates.get(next);
