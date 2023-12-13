@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PartTwo {
-    private static final String puzzleInput = "2023/Day12/test.txt";
+    private static final String puzzleInput = "2023/Day12/input.txt";
 
     public static void main(String[] args) throws IOException {
         List<String> lines = readFile(puzzleInput);
@@ -48,21 +48,40 @@ public class PartTwo {
         //    put the sum of all these values in mem[bi][gi]
 
         // Last element is special case where if it fits itself, mem[bi][gi] = 1;
+        // and also needs to check all the spaces after it
+        int start = 0;
+        for (int i = 0; i < groupNums.length - 1; i++) {
+            start += groupNums[i] + 1;
+        }
+        int end = board.length;
+
+        int groupSize = groupNums[groupNums.length - 1];
+        for (int bi = start; bi <= end; bi++) {
+            // check whether itself can be placed there
+            if (!doesNotContain(board, bi, Math.min(bi + groupSize, end), '.')) {
+                continue;
+            }
+
+            // check all spaces after it
+            if (doesNotContain(board, bi + groupSize, end, '#')) {
+                mem[bi][groupNums.length - 1] = 1;
+            }
+        }
 
         for (int gi = groupNums.length - 1; gi >= 0; gi--) {
             // skip some positions that are impossible
             // determine boundaries of placement
-            int start = 0;
+            start = 0;
             for (int i = 0; i < gi; i++) {
                 start += groupNums[i] + 1;
             }
 
-            int end = board.length; // End is exclusive 0 1 2 3 4 5 6
+            end = board.length; // End is exclusive 0 1 2 3 4 5 6
             for (int i = groupNums.length - 1; i > gi; i--) {
                 end -= groupNums[i] + 1;
             }
 
-            int groupSize = groupNums[gi];
+            groupSize = groupNums[gi];
             for (int bi = start; bi <= end - groupSize; bi++) {
                 // check whether itself can be placed there
                 if (!doesNotContain(board, bi, Math.min(bi + groupSize, board.length), '.')) {
@@ -73,11 +92,7 @@ public class PartTwo {
                 // check if all can be dots
                 for (int di = bi + groupSize; di <= end; di++) {
                     if (doesNotContain(board, bi + groupSize, Math.min(di + 1, board.length), '#')) {
-                        if (gi == groupNums.length - 1) {
-                            mem[bi][gi] = 1;
-                        } else {
-                            mem[bi][gi] += mem[di + 1][gi + 1];
-                        }
+                        mem[bi][gi] += mem[di + 1][gi + 1];
                     } else {
                         // Break when '#' is hit (I think)
                         break;
@@ -87,7 +102,7 @@ public class PartTwo {
         }
 
         // find all possible arrangements for first groupNum
-        int end = board.length; // End is exclusive 0 1 2 3 4 5 6
+        end = board.length; // End is exclusive 0 1 2 3 4 5 6
         for (int i = groupNums.length - 1; i >= 0; i--) {
             end -= groupNums[i] + 1;
         }
@@ -131,7 +146,7 @@ public class PartTwo {
         for (String line : lines) {
             String[] picross = line.split(" ");
             char[] board = unfoldBoard(picross[0].trim()).toCharArray();
-            int[] groupNums = Arrays.stream(unfoldGroupNums(picross[1].trim().replaceAll("\\.+", ".")).split(","))
+            int[] groupNums = Arrays.stream(unfoldGroupNums(picross[1].trim()).replaceAll("\\.+", ".").split(","))
                 .mapToInt(Integer::parseInt)
                 .toArray();
             long possibleArrangements = doDynamicProgramming(board, groupNums);
