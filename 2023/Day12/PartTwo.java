@@ -30,7 +30,7 @@ public class PartTwo {
     public static long doDynamicProgramming(char[] board, int[] groupNums) {
         // make two-dimensional array of board * groupNums
         long[][] mem = new long[board.length + 2][groupNums.length + 1];
-        // Fill last 1 col with 1 [board.length + 1][all]
+        // Fill last 1 col with 0 [board.length + 1][all]
 //        for (int i = 0; i < groupNums.length + 1; i++) {
 //            mem[board.length + 1][i] = 1;
 //        }
@@ -62,11 +62,9 @@ public class PartTwo {
                 end -= groupNums[i] + 1;
             }
 
-            for (int bi = start; bi < end; bi++) {
-                // fill the table
-                int groupSize = groupNums[gi];
-
-                // TODO: check whether itself can be placed there
+            int groupSize = groupNums[gi];
+            for (int bi = start; bi <= end - groupSize; bi++) {
+                // check whether itself can be placed there
                 if (!doesNotContain(board, bi, Math.min(bi + groupSize, board.length), '.')) {
                     continue;
                 }
@@ -74,7 +72,6 @@ public class PartTwo {
                 // check possible arrangements after this
                 // check if all can be dots
                 for (int di = bi + groupSize; di <= end; di++) {
-                    // TODO: Check dots before as well // no need
                     if (doesNotContain(board, bi + groupSize, Math.min(di + 1, board.length), '#')) {
                         if (gi == groupNums.length - 1) {
                             mem[bi][gi] = 1;
@@ -86,20 +83,28 @@ public class PartTwo {
                         break;
                     }
                 }
-
-//                // thisMem is mem[groupIndex][boardIndex]
-//                // To calculate value of this box, would be to check if current box works
-//                if (checkArrangement(board, bi, groupSize)) {
-//                    // If work => thisMem = mem[groupIndex + 1][boardIndex + groupSize + 1 (space)]
-//                    mem[gi][bi] = mem[gi + 1][bi + groupSize + 1];
-//                } else {
-//                    // If not work => thisMem = 0
-//                    mem[gi][bi] = 0;
-//                }
             }
         }
 
-        return mem[0][0];
+        // find all possible arrangements for first groupNum
+        int end = board.length; // End is exclusive 0 1 2 3 4 5 6
+        for (int i = groupNums.length - 1; i >= 0; i--) {
+            end -= groupNums[i] + 1;
+        }
+
+        long total = 0;
+        total += mem[0][0]; // always possible if element is possible
+        // Check where leading dots can go
+        for (int di = 0; di <= end; di++) {
+            if (doesNotContain(board, 0, Math.min(di + 1, board.length), '#')) {
+                total += mem[di + 1][0];
+            } else {
+                // Break when '#' is hit (I think)
+                break;
+            }
+        }
+
+        return total;
         // once entire table is filled, sum up everything in row/col of first groupNum
         // do dynamic programming let's go
     }
