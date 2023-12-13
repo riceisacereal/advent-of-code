@@ -27,101 +27,91 @@ public class PartTwo {
         return true;
     }
 
-    public static long doDynamicProgramming(char[] board, int[] groupNums) {
-        // make two-dimensional array of board * groupNums
-        long[][] mem = new long[board.length + 2][groupNums.length + 1];
-        // Fill last 1 col with 0 [board.length + 1][all]
-//        for (int i = 0; i < groupNums.length + 1; i++) {
-//            mem[board.length + 1][i] = 1;
-//        }
-        // Fill last 1 col with 0 [all][groupNums.length]
-//        for (int i = 0; i < board.length + 2; i++) {
-//            mem[i][groupNums.length] = 1;
-//        }
+    public static int getStart(int[] groupNums, int index) {
+        int start = 0;
+        for (int i = 0; i < index; i++) {
+            start += groupNums[i] + 1;
+        }
+        return start;
+    }
 
-        // work from back to front
-        // determine for each groupNum starting at each board position
-        // 1. whether itself can be placed there
-        // 2. sum up the possible arrangements after it by: spacing out one dot, then two, then tree...
-        //    (the added value would be mem[bi + size + dots][gi + 1])
-        //    stop when a '#' is hit
-        //    put the sum of all these values in mem[bi][gi]
+    public static int getEnd(int[] groupNums, int index, int maxLength) {
+        int end = maxLength; // End is exclusive 0 1 2 3 4 5 6
+        for (int i = groupNums.length - 1; i > index; i--) {
+            end -= groupNums[i] + 1;
+        }
+        return end;
+    }
+
+    public static long checkTrailingDotsGetMemoi(long[][] mem, char[] board, int start, int end, int elementIndex) {
+        // Check possible arrangements after this = find the max range that can be dots
+        long sum = 0;
+        for (int di = start; di <= end; di++) {
+            if (doesNotContain(board, start, Math.min(di + 1, board.length), '#')) {
+                sum += mem[di + 1][elementIndex];
+            } else {
+                // Break when '#' is hit
+                break;
+            }
+        }
+        return sum;
+    }
+
+    public static long doDynamicProgramming(char[] board, int[] groupNums) {
+        // Make two-dimensional array of board * groupNums
+        long[][] mem = new long[board.length + 2][groupNums.length + 1];
+
+        // Work from back to front
+        // Determine for each groupNum starting at each board position
+        // 1. Whether itself can be placed there
+        // 2. Sum up the possible arrangements after it by: spacing out one dot, then two, then tree...
+        //    (the added value would be mem[bi + (size - 1) + dots + 1][gi + 1])
+        //    Stop when a '#' is hit
+        //    Put the sum of all these values in mem[bi][gi]
 
         // Last element is special case where if it fits itself, mem[bi][gi] = 1;
         // and also needs to check all the spaces after it
-        int start = 0;
-        for (int i = 0; i < groupNums.length - 1; i++) {
-            start += groupNums[i] + 1;
-        }
+        int start = getStart(groupNums, groupNums.length - 1);
         int end = board.length;
 
         int groupSize = groupNums[groupNums.length - 1];
         for (int bi = start; bi <= end; bi++) {
-            // check whether itself can be placed there
+            // Check whether itself can be placed there
             if (!doesNotContain(board, bi, Math.min(bi + groupSize, end), '.')) {
                 continue;
             }
-
-            // check all spaces after it
+            // Check all spaces after it
             if (doesNotContain(board, bi + groupSize, end, '#')) {
                 mem[bi][groupNums.length - 1] = 1;
             }
         }
 
+        // All elements in between
         for (int gi = groupNums.length - 1; gi >= 0; gi--) {
-            // skip some positions that are impossible
-            // determine boundaries of placement
-            start = 0;
-            for (int i = 0; i < gi; i++) {
-                start += groupNums[i] + 1;
-            }
-
-            end = board.length; // End is exclusive 0 1 2 3 4 5 6
-            for (int i = groupNums.length - 1; i > gi; i--) {
-                end -= groupNums[i] + 1;
-            }
+            // Skip some positions that are impossible
+            // Determine boundaries of placement
+            start = getStart(groupNums, gi);
+            end = getEnd(groupNums, gi, board.length); // End is exclusive 0 1 2 3 4 5 6
 
             groupSize = groupNums[gi];
             for (int bi = start; bi <= end - groupSize; bi++) {
-                // check whether itself can be placed there
+                // Check whether itself can be placed there
                 if (!doesNotContain(board, bi, Math.min(bi + groupSize, board.length), '.')) {
                     continue;
                 }
-
-                // check possible arrangements after this
-                // check if all can be dots
-                for (int di = bi + groupSize; di <= end; di++) {
-                    if (doesNotContain(board, bi + groupSize, Math.min(di + 1, board.length), '#')) {
-                        mem[bi][gi] += mem[di + 1][gi + 1];
-                    } else {
-                        // Break when '#' is hit (I think)
-                        break;
-                    }
-                }
+                mem[bi][gi] += checkTrailingDotsGetMemoi(mem, board, bi + groupSize, end, gi + 1);
             }
         }
 
-        // find all possible arrangements for first groupNum
-        end = board.length; // End is exclusive 0 1 2 3 4 5 6
-        for (int i = groupNums.length - 1; i >= 0; i--) {
-            end -= groupNums[i] + 1;
-        }
+        // Find all possible arrangements for first groupNum
+        end = getEnd(groupNums, -1, board.length); // End is exclusive 0 1 2 3 4 5 6
 
         long total = 0;
-        total += mem[0][0]; // always possible if element is possible
+        total += mem[0][0]; // Dot goes before the board
         // Check where leading dots can go
-        for (int di = 0; di <= end; di++) {
-            if (doesNotContain(board, 0, Math.min(di + 1, board.length), '#')) {
-                total += mem[di + 1][0];
-            } else {
-                // Break when '#' is hit (I think)
-                break;
-            }
-        }
+        total += checkTrailingDotsGetMemoi(mem, board, 0, end, 0);
 
         return total;
-        // once entire table is filled, sum up everything in row/col of first groupNum
-        // do dynamic programming let's go
     }
 
     public static String unfoldBoard(String s) {
@@ -141,7 +131,6 @@ public class PartTwo {
     }
 
     public static long parseInput(List<String> lines) {
-        int lineNum = 1;
         long points = 0;
         for (String line : lines) {
             String[] picross = line.split(" ");
@@ -150,9 +139,7 @@ public class PartTwo {
                 .mapToInt(Integer::parseInt)
                 .toArray();
             long possibleArrangements = doDynamicProgramming(board, groupNums);
-            System.out.println(lineNum + ": " + possibleArrangements);
             points += possibleArrangements;
-            lineNum++;
         }
         return points;
     }
