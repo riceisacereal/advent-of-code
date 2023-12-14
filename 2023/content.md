@@ -185,3 +185,18 @@ Mirrors and reflection
 ..##..###
 #....#..#
 ```
+### Day 14: Parabolic Reflector Dish
+2023-12-14\
+Tilting rocks
+```text
+O....#....
+O.OO#....#
+.....##...
+OO.#O....O
+.O.....O#.
+O.#..O.#.#
+..O..#O..O
+.......O..
+#....###..
+#OO..#....
+```
