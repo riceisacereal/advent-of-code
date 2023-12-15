@@ -21,32 +21,32 @@ public class PartTwo {
     }
 
     static class Board {
-        private ArrayList<char[]> tilted;
+        private final ArrayList<char[]> rocks;
 
         public Board(List<String> lines) {
-            this.tilted = new ArrayList<>();
+            this.rocks = new ArrayList<>();
             for (String line : lines) {
-                this.tilted.add(line.toCharArray());
+                this.rocks.add(line.toCharArray());
             }
         }
 
-        public Board(ArrayList<char[]> tilted) {
-            this.tilted = tilted;
+        public Board(ArrayList<char[]> rocks) {
+            this.rocks = rocks;
         }
 
         public void tiltNorth() {
-            int maxY = this.tilted.size();
-            int maxX = this.tilted.get(0).length;
+            int maxY = this.rocks.size();
+            int maxX = this.rocks.get(0).length;
             int[] northTrack = new int[maxX];
 
             for (int i = 0; i < maxY; i++) {
-                char[] line = this.tilted.get(i);
+                char[] line = this.rocks.get(i);
                 for (int j = 0; j < maxX; j++) {
                     char c = line[j];
                     if (c == '#') northTrack[j] = i + 1;
                     else if (c == 'O') {
-                        this.tilted.get(i)[j] = '.';
-                        this.tilted.get(northTrack[j])[j] = 'O';
+                        this.rocks.get(i)[j] = '.';
+                        this.rocks.get(northTrack[j])[j] = 'O';
                         northTrack[j]++;
                     }
                 }
@@ -54,19 +54,19 @@ public class PartTwo {
         }
 
         public void tiltSouth() {
-            int maxY = this.tilted.size();
-            int maxX = this.tilted.get(0).length;
+            int maxY = this.rocks.size();
+            int maxX = this.rocks.get(0).length;
             int[] southTrack = new int[maxX];
             Arrays.fill(southTrack, maxY - 1);
 
             for (int i = maxY - 1; i >= 0; i--) {
-                char[] line = this.tilted.get(i);
+                char[] line = this.rocks.get(i);
                 for (int j = maxX - 1; j >= 0; j--) {
                     char c = line[j];
                     if (c == '#') southTrack[j] = i - 1;
                     else if (c == 'O') {
-                        this.tilted.get(i)[j] = '.';
-                        this.tilted.get(southTrack[j])[j] = 'O';
+                        this.rocks.get(i)[j] = '.';
+                        this.rocks.get(southTrack[j])[j] = 'O';
                         southTrack[j]--;
                     }
                 }
@@ -74,17 +74,17 @@ public class PartTwo {
         }
 
         public void tiltWest() {
-            int maxY = this.tilted.size();
-            int maxX = this.tilted.get(0).length;
+            int maxY = this.rocks.size();
+            int maxX = this.rocks.get(0).length;
             int[] westTrack = new int[maxY];
 
             for (int j = 0; j < maxX; j++) {
                 for (int i = 0; i < maxY; i++) {
-                    char c = this.tilted.get(i)[j];
+                    char c = this.rocks.get(i)[j];
                     if (c == '#') westTrack[i] = j + 1;
                     else if (c == 'O') {
-                        this.tilted.get(i)[j] = '.';
-                        this.tilted.get(i)[westTrack[i]] = 'O';
+                        this.rocks.get(i)[j] = '.';
+                        this.rocks.get(i)[westTrack[i]] = 'O';
                         westTrack[i]++;
                     }
                 }
@@ -92,18 +92,18 @@ public class PartTwo {
         }
 
         public void tiltEast() {
-            int maxY = this.tilted.size();
-            int maxX = this.tilted.get(0).length;
+            int maxY = this.rocks.size();
+            int maxX = this.rocks.get(0).length;
             int[] eastTrack = new int[maxY];
             Arrays.fill(eastTrack, maxX - 1);
 
             for (int j = maxX - 1; j >= 0; j--) {
                 for (int i = maxY - 1; i >= 0; i--) {
-                    char c = this.tilted.get(i)[j];
+                    char c = this.rocks.get(i)[j];
                     if (c == '#') eastTrack[i] = j - 1;
                     else if (c == 'O') {
-                        this.tilted.get(i)[j] = '.';
-                        this.tilted.get(i)[eastTrack[i]] = 'O';
+                        this.rocks.get(i)[j] = '.';
+                        this.rocks.get(i)[eastTrack[i]] = 'O';
                         eastTrack[i]--;
                     }
                 }
@@ -112,7 +112,7 @@ public class PartTwo {
 
         public Board deepCopy() {
             ArrayList<char[]> a = new ArrayList<>();
-            for (char[] ca : this.tilted) {
+            for (char[] ca : this.rocks) {
                 char[] newCa = new char[ca.length];
                 System.arraycopy(ca, 0, newCa, 0, ca.length);
                 a.add(newCa);
@@ -129,8 +129,8 @@ public class PartTwo {
                 return false;
             }
             Board board = (Board) o;
-            for (int i = 0; i < this.tilted.size(); i++) {
-                if (!Arrays.equals(this.tilted.get(i), board.tilted.get(i))) {
+            for (int i = 0; i < this.rocks.size(); i++) {
+                if (!Arrays.equals(this.rocks.get(i), board.rocks.get(i))) {
                     return false;
                 }
             }
@@ -139,7 +139,7 @@ public class PartTwo {
 
         @Override
         public int hashCode() {
-            return Objects.hash(tilted);
+            return Objects.hash(rocks);
         }
     }
 
@@ -179,7 +179,7 @@ public class PartTwo {
 
         int totalLoad = 0;
         for (int i = 0; i < maxY; i++) {
-            char[] line = freshBoard.tilted.get(i);
+            char[] line = freshBoard.rocks.get(i);
             for (int j = 0; j < maxX; j++) {
                 char c = line[j];
                 if (c == 'O') {
