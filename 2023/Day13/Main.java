@@ -5,7 +5,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Main {
     private static final String puzzleInput = "2023/Day13/input.txt";
@@ -20,7 +19,19 @@ public class Main {
         return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
     }
 
-    public static int checkReflection(ArrayList<ArrayList<char[]>> allPatterns) {
+    public static boolean checkReflection(ArrayList<char[]> pattern, int start, int max, int ray, boolean row) {
+        int low = start;
+        int high = start + 1;
+
+        while (low >= 0 && high < max) {
+            if (row && pattern.get(ray)[low] != pattern.get(ray)[high]) return false;
+            else if (!row && pattern.get(low)[ray] != pattern.get(high)[ray]) return false;
+            low--; high++;
+        }
+        return true;
+    }
+
+    public static int getResult(ArrayList<ArrayList<char[]>> allPatterns) {
         int result = 0;
 
         for (ArrayList<char[]> pattern : allPatterns) {
@@ -31,43 +42,51 @@ public class Main {
             for (int i = 0; i < maxX; i++) {
                 for (int j = 0; j < maxY; j++) {
                     // check left-right reflection
-                    int left = i;
-                    int right = i + 1;
-                    count.merge("col" + i, 1, Integer::sum);
-                    while (left >= 0 && right < maxX) {
-                        if (pattern.get(j)[left] != pattern.get(j)[right]) {
-                            count.put("col" + i, count.get("col" + i) - 1);
-                            break;
-                        }
-                        left--;
-                        right++;
+                    if (checkReflection(pattern, i, maxX, j, true)) {
+                        count.merge("col" + i, 1, Integer::sum);
                     }
 
+//                    int left = i;
+//                    int right = i + 1;
+//                    count.merge("col" + i, 1, Integer::sum);
+//                    while (left >= 0 && right < maxX) {
+//                        if (pattern.get(j)[left] != pattern.get(j)[right]) {
+//                            count.put("col" + i, count.get("col" + i) - 1);
+//                            break;
+//                        }
+//                        left--;
+//                        right++;
+//                    }
+
                     // check up-down reflection when not last row
-                    int up = j;
-                    int down = j + 1;
-                    count.merge("row" + j, 1, Integer::sum);
-                    while (up >= 0 && down < maxY) {
-                        if (pattern.get(up)[i] != pattern.get(down)[i]) {
-                            count.put("row" + j, count.get("row" + j) - 1);
-                            break;
-                        }
-                        up--;
-                        down++;
+                    if (checkReflection(pattern, j, maxY, i, false)) {
+                        count.merge("row" + j, 1, Integer::sum);
                     }
+
+//                    int up = j;
+//                    int down = j + 1;
+//                    count.merge("row" + j, 1, Integer::sum);
+//                    while (up >= 0 && down < maxY) {
+//                        if (pattern.get(up)[i] != pattern.get(down)[i]) {
+//                            count.put("row" + j, count.get("row" + j) - 1);
+//                            break;
+//                        }
+//                        up--;
+//                        down++;
+//                    }
                 }
             }
 
             // check all row axis
             for (int i = 0; i < maxY - 1; i++) {
-                if (count.get("row" + i) == maxX - 1) { // Remove -1 for part 1 answer
+                if (count.get("row" + i) != null && count.get("row" + i) == maxX - 1) { // Remove -1 for part 1 answer
                     result += 100 *(i + 1);
                 }
             }
 
             // check all column axis
             for (int i = 0; i < maxX - 1; i++) {
-                if (count.get("col" + i) == maxY - 1) { // Remove -1 for part 1 answer
+                if (count.get("col" + i) != null && count.get("col" + i) == maxY - 1) { // Remove -1 for part 1 answer
                     result += i + 1;
                 }
             }
@@ -89,6 +108,6 @@ public class Main {
         }
         allPatterns.add(pattern);
 
-        return checkReflection(allPatterns);
+        return getResult(allPatterns);
     }
 }
