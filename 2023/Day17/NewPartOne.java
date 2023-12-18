@@ -39,16 +39,17 @@ public class NewPartOne {
     }
 
     public static void addToQueue(PriorityQueue<QueueElement> pq, int[][] heatLoss,
-                                  boolean[][][][] visited, int[] loc, int direction, int steps, int currentDistance) {
+                                  int[][][] visited, int[] loc, int direction, int steps, QueueElement current) {
         int[] max = new int[] {heatLoss.length, heatLoss[0].length};
         int[] end = new int[] {max[0] - 1, max[1] - 1};
         int[] newLoc = getNewLoc(direction, loc, max);
         if (newLoc != null) {
             // don't visit if visited
             int hl = heatLoss[newLoc[0]][newLoc[1]];
-            if (!visited[newLoc[0]][newLoc[1]][direction][steps - 1]) {
-                pq.add(new QueueElement(newLoc, direction, steps, currentDistance + hl,
+            if (steps < visited[newLoc[0]][newLoc[1]][direction]) {
+                pq.add(new QueueElement(newLoc, direction, steps, current.distance + hl,
                     hl + manhattenDistance(newLoc, end)));
+//                visited[newLoc[0]][newLoc[1]][direction] = steps;
             }
         }
     }
@@ -58,15 +59,18 @@ public class NewPartOne {
         final int maxX = lines.get(0).length();
         final int[] end = new int[] {maxY - 1, maxX - 1};
         final int[][] heatLoss = new int[maxY][maxX];
-        boolean[][][][] visited = new boolean[maxY][maxX][4][3];
+        int[][][] visited = new int[maxY][maxX][4];
         for (int i = 0; i < maxY; i++) {
             String line = lines.get(i);
             for (int j = 0; j < maxX; j++) {
                 heatLoss[i][j] = line.charAt(j) - 48;
+                for (int k = 0; k < 4; k++) {
+                    visited[i][j][k] = 4;
+                }
             }
         }
 
-        PriorityQueue<QueueElement> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a.distance));
+        PriorityQueue<QueueElement> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a.heuristicValue + a.distance));
         QueueElement start = new QueueElement(new int[] {0, 0}, 1, 1, 0,
             heatLoss[0][0] + manhattenDistance(new int[] {0, 0}, end));
         pq.add(start);
@@ -77,24 +81,20 @@ public class NewPartOne {
         QueueElement current = pq.poll();
         while (current != null && manhattenDistance(current.location, end) != 0) {
             int[] loc = current.location;
-            visited[loc[0]][loc[1]][current.direction][current.steps - 1] = true;
+            visited[loc[0]][loc[1]][current.direction] = current.steps;
 
             // Add left
-            addToQueue(pq, heatLoss, visited, loc, (current.direction + 3) % 4, 1, current.distance);
+            addToQueue(pq, heatLoss, visited, loc, (current.direction + 3) % 4, 1, current);
             // Add right
-            addToQueue(pq, heatLoss, visited, loc, (current.direction + 1) % 4, 1, current.distance);
+            addToQueue(pq, heatLoss, visited, loc, (current.direction + 1) % 4, 1, current);
             // If steps < 3 also visit front
             if (current.steps < 3) addToQueue(pq, heatLoss, visited, loc, current.direction,
-                current.steps + 1, current.distance);
+                current.steps + 1, current);
 
-//            System.out.println(current.distance);
+            System.out.println(current.distance);
             current = pq.poll();
         }
 
-        int points = 0;
-        for (String line : lines) {
-            System.out.println(line);
-        }
         return current.distance;
     }
 }
