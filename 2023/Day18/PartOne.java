@@ -11,6 +11,16 @@ import java.util.regex.Pattern;
 // 52690 too high
 
 public class PartOne {
+    public static class Dig {
+        String direction;
+        int blocks;
+
+        public Dig(String direction, int blocks) {
+            this.direction = direction;
+            this.blocks = blocks;
+        }
+    }
+
     private static final String puzzleInput = "2023/Day18/input.txt";
 
     public static void main(String[] args) throws IOException {
