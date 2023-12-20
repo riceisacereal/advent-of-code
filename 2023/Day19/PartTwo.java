@@ -73,7 +73,6 @@ public class PartTwo {
 
     public static long parseInput(Scanner file) {
         HashMap<String, Workflow> workflows = getWorkflows(file);
-//        ArrayList<Part> parts = getParts(file);
         // Make Queue where workflow and part are a pair
         // Part has a range within
         // BFS and add to queue
@@ -99,21 +98,6 @@ public class PartTwo {
             Workflow wf = workflows.get(wfName);
             processConds(q, wf.conds, p);
         }
-
-//        int accepted = 0;
-//        Workflow in = workflows.get("in");
-//        for (Part p : parts) {
-//            Workflow current = in;
-//            String result = current.getResult(p);
-//            while (!result.equals("R")) {
-//                result = current.getResult(p);
-//                if (result.equals("A")) {
-//                    accepted += p.getSumOfXmas();
-//                    break;
-//                }
-//                current = workflows.get(result);
-//            }
-//        }
 
         return count;
     }
