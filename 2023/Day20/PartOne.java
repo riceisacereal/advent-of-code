@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
+// 628332964 too low
+
 public class PartOne {
-    private static final String puzzleInput = "2023/Day20/test.txt";
+    private static final String puzzleInput = "2023/Day20/test2.txt";
 
     public static void main(String[] args) throws IOException {
         List<String> lines = readFile(puzzleInput);
@@ -40,26 +42,43 @@ public class PartOne {
         for (Map.Entry<String, String[]> e : links.entrySet()) {
             Component parent = componentMap.get(e.getKey());
             for (String child : e.getValue()) {
-                parent.addOutput(componentMap.get(child));
+                Component c = componentMap.get(child);
+                if (c != null) parent.addOutput(c);
                 // Link input components for NAND
                 if (nandInputs.contains(child)) {
                     Component nand = componentMap.get(child);
-                    nand.nandInputs.add(parent);
+                    nand.inputComponents.add(parent);
                 }
             }
         }
 
+        int highCount = 0;
+        int lowCount = 0;
         Component broadcaster = componentMap.get("broadcaster");
-        Queue<Component> q = new LinkedList<>();
-        for (int i = 0; i < 1000; i++) {
-            q.add(broadcaster);
+        Queue<Tuple> q = new LinkedList<>();
+        for (int i = 0; i < 1; i++) {
+            lowCount++; // For the button
+            q.add(new Tuple(broadcaster, false));
             while (!q.isEmpty()) {
-                Component cur = q.poll();
+                Tuple t = q.poll();
+                Component c = t.c;
                 // amount of high/low pulses sent
                 // add sent components to queue
+                long pulses = c.sendPulse(q, t.input);
+                System.out.println(c.name + " " + pulses);
+                if (pulses == 0) {
+                    continue;
+                }
+
+                if (pulses >= 0) {
+                    highCount += pulses;
+                } else {
+                    lowCount -= pulses;
+                }
             }
         }
 
-        return 0;
+        System.out.println(lowCount + " " + highCount);
+        return highCount * lowCount;
     }
 }
