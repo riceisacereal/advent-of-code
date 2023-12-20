@@ -66,10 +66,8 @@ public class PartOne {
             while (!q.isEmpty()) {
                 Tuple t = q.poll();
                 Component c = t.c;
-                // amount of high/low pulses sent
-                // add sent components to queue
+                // Amount of high/low pulses sent
                 long pulses = c.sendPulse(q, t.input);
-                System.out.println(c.name + " " + pulses);
                 if (pulses == 0) {
                     continue;
                 }
@@ -82,7 +80,6 @@ public class PartOne {
             }
         }
 
-        System.out.println(lowCount + " " + highCount);
         return highCount * lowCount;
     }
 }
