@@ -12,7 +12,7 @@ import java.util.Queue;
 // 628332964 too low
 
 public class PartOne {
-    private static final String puzzleInput = "2023/Day20/test2.txt";
+    private static final String puzzleInput = "2023/Day20/input.txt";
 
     public static void main(String[] args) throws IOException {
         List<String> lines = readFile(puzzleInput);
@@ -43,7 +43,11 @@ public class PartOne {
             Component parent = componentMap.get(e.getKey());
             for (String child : e.getValue()) {
                 Component c = componentMap.get(child);
-                if (c != null) parent.addOutput(c);
+                if (c != null) {
+                    parent.addOutput(c);
+                } else {
+                    parent.addOutput(new Component(child)); // Add dummy component
+                }
                 // Link input components for NAND
                 if (nandInputs.contains(child)) {
                     Component nand = componentMap.get(child);
@@ -56,7 +60,7 @@ public class PartOne {
         int lowCount = 0;
         Component broadcaster = componentMap.get("broadcaster");
         Queue<Tuple> q = new LinkedList<>();
-        for (int i = 0; i < 1; i++) {
+        for (int i = 0; i < 1000; i++) {
             lowCount++; // For the button
             q.add(new Tuple(broadcaster, false));
             while (!q.isEmpty()) {
