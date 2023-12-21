@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,11 +16,11 @@ public class Shared {
         }
     }
 
-    public static Map<Component, Component> linkOutputLocateRx(HashMap<String, String[]> links,
+    public static Component linkOutputLocateRx(HashMap<String, String[]> links,
                                           HashMap<String, Component> componentMap,
                                           ArrayList<String> nandInputs) {
         // Link all output components and locate rx
-        Map<Component, Component> rxParent = null;
+        Component rxParent = null;
         for (Map.Entry<String, String[]> e : links.entrySet()) {
             Component parent = componentMap.get(e.getKey());
             for (String child : e.getValue()) {
@@ -33,7 +32,7 @@ public class Shared {
                     parent.addOutput(dummy); // Add dummy component
                     if (child.equals("rx")) {
                         // Pretty sure it's only rx but what if
-                        rxParent = Collections.singletonMap(dummy, parent);
+                        rxParent = parent;
                     }
                 }
                 // Link input components for NAND
@@ -43,6 +42,7 @@ public class Shared {
                 }
             }
         }
+
         return rxParent;
     }
 }

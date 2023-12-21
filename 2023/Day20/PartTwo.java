@@ -3,17 +3,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
-// 26905046628202 not the right answer
-// 26276913243886 not the right answer
-// 5325756669870 not the right answer
-// 50938141536 not the right answer
+// 26905046628202 not the right answer - didn't count for only one pulse
+// 26276913243886 not the right answer - one line of counting was put in the wrong place
+//                                       in 1 of the copies of the 4 copies of the same method (I know)
+// 5325756669870 not the right answer - forgot about resetting the circuit
+// 50938141536 not the right answer - //
 
 public class PartTwo {
     private static final String puzzleInput = "2023/Day20/input.txt";
@@ -81,22 +80,17 @@ public class PartTwo {
         ArrayList<String> nandInputs = new ArrayList<>();
 
         Shared.mapComponentMap(lines, componentMap, links, nandInputs);
-        // Link all output components and locate rx
-        Map<Component, Component> rxParent = Shared.linkOutputLocateRx(links, componentMap, nandInputs);
+        // Link all output components and locate rx parent
+        Component rxParent = Shared.linkOutputLocateRx(links, componentMap, nandInputs);
 
-        Component bc = componentMap.get("broadcaster");
-
-        ArrayList<Long> nums = new ArrayList<>();
-        String[] names = new String[] {"qh", "pv", "xm", "hz"};
-        for (String name : names) {
-            nums.add(findCycle(bc, name));
-            reset(bc);
-        }
+        // Find all parents of rx's parent, which should be the ones to look out for
+        ArrayList<Component> lcmComponents = rxParent.inputComponents;
 
         long lcm = 1;
-        for (int i = 0; i < 4; i++) {
-            System.out.println(nums.get(i));
-            lcm = smallestCommonMultiple(lcm, nums.get(i));
+        Component bc = componentMap.get("broadcaster");
+        for (Component c : lcmComponents) {
+            lcm = smallestCommonMultiple(lcm, findCycle(bc, c.name));
+            reset(bc);
         }
 
         return lcm;

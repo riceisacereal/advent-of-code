@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Queue;
 
-// 628332964 too low
+// 628332964 too low - forgot about the pulse handling order and gave every component an input attribute
 
 public class PartOne {
     private static final String puzzleInput = "2023/Day20/input.txt";
