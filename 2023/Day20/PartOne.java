@@ -29,14 +29,7 @@ public class PartOne {
         HashMap<String, Component> componentMap = new HashMap<>();
         ArrayList<String> nandInputs = new ArrayList<>();
 
-        // Create all components and put links into map
-        for (String line : lines) {
-            String[] link = line.split(" -> ");
-            Component c = new Component(link[0]);
-            componentMap.put(c.name, c);
-            links.put(c.name, link[1].split(", "));
-            if (c.type == '&') nandInputs.add(c.name);
-        }
+        Shared.mapComponentMap(lines, componentMap, links, nandInputs);
 
         // Link all output components
         for (Map.Entry<String, String[]> e : links.entrySet()) {
