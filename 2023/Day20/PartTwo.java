@@ -3,6 +3,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,41 +20,45 @@ public class PartTwo {
 
     public static void main(String[] args) throws IOException {
         List<String> lines = readFile(puzzleInput);
-
-        ArrayList<Long> nums = new ArrayList<>();
-        String[] names = new String[] {"qh", "pv", "xm", "hz"};
-        for (String name : names) {
-            nums.add(parseInput(lines, name));
-        }
-
-        long lcm = 1;
-        for (int i = 0; i < 4; i++) {
-            System.out.println(nums.get(i));
-            lcm = smallestCommonMultiple(lcm, nums.get(i));
-        }
-        System.out.println(lcm);
+        long result = parseInput(lines);
+        System.out.println(result);
     }
 
     public static List<String> readFile(String fileName) throws IOException {
         return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
     }
 
+    public static void reset(Component broadcaster) {
+        Queue<Component> q = new LinkedList<>();
+        q.add(broadcaster);
+        while (!q.isEmpty()) {
+            Component c = q.poll();
+            c.output = false;
+            c.reset = true;
+            for (Component o : c.outputComponents) {
+                if (!o.reset) {
+                    q.add(o);
+                }
+            }
+        }
+    }
+
     public static long findCycle(Component broadcaster, String name) {
         long buttonCount = 0;
         Queue<Tuple> q = new LinkedList<>();
         while (true) {
-            int count = 0;
             buttonCount++;
             q.add(new Tuple(broadcaster, false));
+            int countPulse = 0;
             while (!q.isEmpty()) {
                 Tuple t = q.poll();
                 Component c = t.c;
                 if (c.name.equals(name) && !t.input) {
-                    count++;
+                    countPulse++;
                 }
                 c.sendPulse(q, t.input);
             }
-            if (count == 1) return buttonCount;
+            if (countPulse == 1) return buttonCount;
         }
     }
 
@@ -70,7 +75,7 @@ public class PartTwo {
         }
     }
 
-    public static long parseInput(List<String> lines, String name) {
+    public static long parseInput(List<String> lines) {
         HashMap<String, String[]> links = new HashMap<>();
         HashMap<String, Component> componentMap = new HashMap<>();
         ArrayList<String> nandInputs = new ArrayList<>();
@@ -84,7 +89,8 @@ public class PartTwo {
             if (c.type == '&') nandInputs.add(c.name);
         }
 
-        // Link all output components
+        // Link all output components and locate rx
+        Map<Component, Component> rxParent;
         for (Map.Entry<String, String[]> e : links.entrySet()) {
             Component parent = componentMap.get(e.getKey());
             for (String child : e.getValue()) {
@@ -92,7 +98,12 @@ public class PartTwo {
                 if (c != null) {
                     parent.addOutput(c);
                 } else {
-                    parent.addOutput(new Component(child)); // Add dummy component
+                    Component dummy = new Component(child);
+                    parent.addOutput(dummy); // Add dummy component
+                    if (child.equals("rx")) {
+                        // Pretty sure it's only rx but what if
+                        rxParent = Collections.singletonMap(dummy, parent);
+                    }
                 }
                 // Link input components for NAND
                 if (nandInputs.contains(child)) {
@@ -103,6 +114,20 @@ public class PartTwo {
         }
 
         Component bc = componentMap.get("broadcaster");
-        return findCycle(bc, name);
+
+        ArrayList<Long> nums = new ArrayList<>();
+        String[] names = new String[] {"qh", "pv", "xm", "hz"};
+        for (String name : names) {
+            nums.add(findCycle(bc, name));
+            reset(bc);
+        }
+
+        long lcm = 1;
+        for (int i = 0; i < 4; i++) {
+            System.out.println(nums.get(i));
+            lcm = smallestCommonMultiple(lcm, nums.get(i));
+        }
+
+        return lcm;
     }
 }

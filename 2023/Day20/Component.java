@@ -3,14 +3,12 @@ import java.util.Queue;
 
 public class Component {
     String name;
-//    boolean input;
     boolean output;
     char type; // 0 for flip-flop, 1 for NAND
-    // % -> 1 nothing
-    //   -> 0 toggle previous state
-    // & -> multi input NAND (0 if all 1, else 1)
     ArrayList<Component> inputComponents;
     ArrayList<Component> outputComponents;
+
+    boolean reset;
 
     public Component(String line) {
         output = false;
@@ -24,6 +22,8 @@ public class Component {
                 break;
             default: name = line;
         }
+
+        reset = false;
     }
 
     public void addOutput(Component child) {
@@ -31,9 +31,13 @@ public class Component {
     }
 
     public long sendPulse(Queue<Tuple> q, boolean input) {
+        reset = false; // Received a pulse so state changed
         int count = 0;
 
         // Determine output
+        // % -> 1 nothing
+        //   -> 0 toggle previous state
+        // & -> multi input NAND (0 if all 1, else 1)
         switch (type) {
             case '%' -> {
                 if (input) {
@@ -59,6 +63,8 @@ public class Component {
             q.add(new Tuple(o ,output));
         }
 
+        // Return amount of pulses sent
+        // Positive - high, negative - low
         if (output) {
             return outputComponents.size();
         } else {
