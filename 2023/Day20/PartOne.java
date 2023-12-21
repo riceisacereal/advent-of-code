@@ -30,24 +30,7 @@ public class PartOne {
         ArrayList<String> nandInputs = new ArrayList<>();
 
         Shared.mapComponentMap(lines, componentMap, links, nandInputs);
-
-        // Link all output components
-        for (Map.Entry<String, String[]> e : links.entrySet()) {
-            Component parent = componentMap.get(e.getKey());
-            for (String child : e.getValue()) {
-                Component c = componentMap.get(child);
-                if (c != null) {
-                    parent.addOutput(c);
-                } else {
-                    parent.addOutput(new Component(child)); // Add dummy component
-                }
-                // Link input components for NAND
-                if (nandInputs.contains(child)) {
-                    Component nand = componentMap.get(child);
-                    nand.inputComponents.add(parent);
-                }
-            }
-        }
+        Shared.linkOutputLocateRx(links, componentMap, nandInputs); // Ignore return value meant for part 2
 
         int highCount = 0;
         int lowCount = 0;

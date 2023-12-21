@@ -81,30 +81,8 @@ public class PartTwo {
         ArrayList<String> nandInputs = new ArrayList<>();
 
         Shared.mapComponentMap(lines, componentMap, links, nandInputs);
-
         // Link all output components and locate rx
-        Map<Component, Component> rxParent;
-        for (Map.Entry<String, String[]> e : links.entrySet()) {
-            Component parent = componentMap.get(e.getKey());
-            for (String child : e.getValue()) {
-                Component c = componentMap.get(child);
-                if (c != null) {
-                    parent.addOutput(c);
-                } else {
-                    Component dummy = new Component(child);
-                    parent.addOutput(dummy); // Add dummy component
-                    if (child.equals("rx")) {
-                        // Pretty sure it's only rx but what if
-                        rxParent = Collections.singletonMap(dummy, parent);
-                    }
-                }
-                // Link input components for NAND
-                if (nandInputs.contains(child)) {
-                    Component nand = componentMap.get(child);
-                    nand.inputComponents.add(parent);
-                }
-            }
-        }
+        Map<Component, Component> rxParent = Shared.linkOutputLocateRx(links, componentMap, nandInputs);
 
         Component bc = componentMap.get("broadcaster");
 
