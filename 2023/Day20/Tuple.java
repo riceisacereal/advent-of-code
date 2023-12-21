@@ -1,9 +1,9 @@
 public class Tuple {
     boolean input;
-    Component c;
+    Component com;
 
-    public Tuple(Component c, boolean input) {
-        this.c = c;
+    public Tuple(Component com, boolean input) {
+        this.com = com;
         this.input = input;
     }
 }

@@ -36,22 +36,16 @@ public class PartOne {
         Component broadcaster = componentMap.get("broadcaster");
         Queue<Tuple> q = new LinkedList<>();
         for (int i = 0; i < 1000; i++) {
-            lowCount++; // For the button
+            lowCount++; // For the button pulse
+
             q.add(new Tuple(broadcaster, false));
             while (!q.isEmpty()) {
                 Tuple t = q.poll();
-                Component c = t.c;
                 // Amount of high/low pulses sent
-                long pulses = c.sendPulse(q, t.input);
-                if (pulses == 0) {
-                    continue;
-                }
+                long pulses = t.com.sendPulse(q, t.input);
 
-                if (pulses >= 0) {
-                    highCount += pulses;
-                } else {
-                    lowCount -= pulses;
-                }
+                if (pulses >= 0) highCount += pulses;
+                else lowCount -= pulses;
             }
         }
 

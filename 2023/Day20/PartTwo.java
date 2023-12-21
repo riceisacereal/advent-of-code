@@ -51,7 +51,7 @@ public class PartTwo {
             int countPulse = 0;
             while (!q.isEmpty()) {
                 Tuple t = q.poll();
-                Component c = t.c;
+                Component c = t.com;
                 if (c.name.equals(name) && !t.input) {
                     countPulse++;
                 }
