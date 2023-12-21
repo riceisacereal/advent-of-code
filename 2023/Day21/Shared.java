@@ -16,19 +16,20 @@ public class Shared {
                 int[] cp = paths.poll();
                 visited[cp[0]][cp[1]] = true;
                 reachable[cp[0]][cp[1]] = true;
-                for (int i = -1; i <= 1; i++) {
-                    for (int j = -1; j <= 1; j++) {
-                        if ((i + j) % 2 == 0) {
-                            continue;
-                        }
 
-                        int y = cp[0] + i;
-                        int x = cp[1] + j;
-                        if (y >= 0 && y < maxY && x >= 0 && x < maxY) {
-                            if (!visited[y][x] && lines.get(y).charAt(x) != '#') {
-                                newPaths.add(new int[] {y, x});
-                                visited[y][x] = true;
-                            }
+                int[][] coords = new int[][] {
+                    {-1, 0},
+                    {0, -1},
+                    {0, 1},
+                    {1, 0}
+                };
+                for (int[] coord : coords) {
+                    int y = cp[0] + coord[0];
+                    int x = cp[1] + coord[1];
+                    if (y >= 0 && y < maxY && x >= 0 && x < maxY) {
+                        if (!visited[y][x] && lines.get(y).charAt(x) != '#') {
+                            newPaths.add(new int[] {y, x});
+                            visited[y][x] = true;
                         }
                     }
                 }
