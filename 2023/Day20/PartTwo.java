@@ -19,8 +19,19 @@ public class PartTwo {
 
     public static void main(String[] args) throws IOException {
         List<String> lines = readFile(puzzleInput);
-        long result = parseInput(lines);
-        System.out.println(result);
+
+        ArrayList<Long> nums = new ArrayList<>();
+        String[] names = new String[] {"qh", "pv", "xm", "hz"};
+        for (String name : names) {
+            nums.add(parseInput(lines, name));
+        }
+
+        long lcm = 1;
+        for (int i = 0; i < 4; i++) {
+            System.out.println(nums.get(i));
+            lcm = smallestCommonMultiple(lcm, nums.get(i));
+        }
+        System.out.println(lcm);
     }
 
     public static List<String> readFile(String fileName) throws IOException {
@@ -59,7 +70,7 @@ public class PartTwo {
         }
     }
 
-    public static long parseInput(List<String> lines) {
+    public static long parseInput(List<String> lines, String name) {
         HashMap<String, String[]> links = new HashMap<>();
         HashMap<String, Component> componentMap = new HashMap<>();
         ArrayList<String> nandInputs = new ArrayList<>();
@@ -91,18 +102,7 @@ public class PartTwo {
             }
         }
 
-        ArrayList<Long> nums = new ArrayList<>();
         Component bc = componentMap.get("broadcaster");
-        String[] names = new String[] {"qh", "pv", "xm", "hz"};
-        for (String name : names) {
-            nums.add(findCycle(bc, name));
-        }
-        long lcm = 1;
-        for (int i = 0; i < 4; i++) {
-            System.out.println(nums.get(i));
-            lcm = smallestCommonMultiple(lcm, nums.get(i));
-        }
-
-        return lcm;
+        return findCycle(bc, name);
     }
 }
