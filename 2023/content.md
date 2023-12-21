@@ -280,3 +280,29 @@ hdj{m>838:A,pv}
 {x=2461,m=1339,a=466,s=291}
 {x=2127,m=1623,a=2188,s=1013}
 ```
+### Day 20: Pulse Propagation
+2023-12-20\
+Tricksy little circuitses
+```text
+broadcaster -> a, b, c
+%a -> b
+%b -> c
+%c -> inv
+&inv -> a
+```
+### Day 21: Step Counter
+2023-12-21\
+Perfectly crafted input just for you
+```text
+...........
+.....###.#.
+.###.##.O#.
+.O#O#O.O#..
+O.O.#.#.O..
+.##O.O####.
+.##.O#O..#.
+.O.O.O.##..
+.##.#.####.
+.##O.##.##.
+...........
+```
