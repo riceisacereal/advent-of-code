@@ -6,15 +6,14 @@ public class Shared {
     public static void markReachable(List<String> lines, boolean[][] reachable, int[] s, final int RANGE) {
         int maxY = reachable.length;
         int maxX = reachable[0].length;
+
         boolean[][] visited = new boolean[maxY][maxX];
         Queue<int[]> paths = new LinkedList<>();
         paths.add(s);
-
         for (int step = 0; step <= RANGE; step++) {
             Queue<int[]> newPaths = new LinkedList<>();
             while (!paths.isEmpty()) {
                 int[] cp = paths.poll();
-                visited[cp[0]][cp[1]] = true;
                 reachable[cp[0]][cp[1]] = true;
 
                 int[][] coords = new int[][] {
@@ -51,13 +50,11 @@ public class Shared {
         Shared.markReachable(lines, reachable, s, RANGE);
 
         int oddOrEven = RANGE % 2;
-        for (int i = s[0] - RANGE; i <= s[0] + RANGE; i++) {
+        for (int i = Math.max(0, s[0] - RANGE); i <= Math.min(maxY - 1, s[0] + RANGE); i++) {
             int rangeX = RANGE - Math.abs(i - s[0]);
-            for (int j = s[1] - rangeX; j <= s[1] + rangeX; j++) {
+            for (int j = Math.max(0, s[1] - rangeX); j <= Math.min(maxX - 1, s[1] + rangeX); j++) {
                 int[] p = new int[] {i % maxY, j % maxX};
-                if (p[0] < 0) p[0] = maxY + p[0];
-                if (p[1] < 0) p[1] = maxX + p[1];
-                if (manhattanDistance(s, p) % 2 == oddOrEven && lines.get(p[0]).charAt(p[1]) != '#' && reachable[p[0]][p[1]]) {
+                if (manhattanDistance(s, p) % 2 == oddOrEven && reachable[p[0]][p[1]]) {
                     stepMap[p[0]][p[1]] = true;
                 }
             }
