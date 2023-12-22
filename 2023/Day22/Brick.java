@@ -1,15 +1,16 @@
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Objects;
 
 public class Brick {
-//    int[][] dimension;
     ArrayList<int[]> blocks = new ArrayList<>(); // int[3]
-    boolean check;
+
+    // Part 2
+    HashSet<Brick> above;
+    HashSet<Brick> under;
 
     public Brick(String line) {
-        check = false;
         int[][] dimension = new int[2][3];
         int i = 0;
         int j;
@@ -51,6 +52,10 @@ public class Brick {
                 blocks.add(new int[] {x, y, b});
             }
         }
+
+        // Part 2
+        above = new HashSet<>();
+        under = new HashSet<>();
     }
 
     public void lowerBrickBy(int n) {
@@ -68,12 +73,12 @@ public class Brick {
             return false;
         }
         Brick brick = (Brick) o;
-        return check == brick.check && blocks.equals(brick.blocks);
+        return blocks.equals(brick.blocks);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(blocks, check);
+        return Objects.hash(blocks);
     }
 
     @Override
