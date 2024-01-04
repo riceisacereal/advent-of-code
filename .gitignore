@@ -6,3 +6,6 @@ cmake-build-debug
 2023/out
 2023/.idea
 *.iml
+
+**/input.txt
+**/test[0-9].txt
