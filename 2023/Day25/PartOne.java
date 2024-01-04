@@ -23,75 +23,79 @@ public class PartOne {
         return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
     }
 
-    public static void addIfNotExist(ArrayList<NodeGroup> nodeGroups, NodeGroup ng) {
-        for (NodeGroup nodeGroup : nodeGroups) {
-            if (nodeGroup.id.equals(ng.id)) {
-                return;
+//    public static void addIfNotExist(ArrayList<NodeGroup> nodeGroups, NodeGroup ng) {
+//        for (NodeGroup nodeGroup : nodeGroups) {
+//            if (nodeGroup.id.equals(ng.id)) {
+//                return;
+//            }
+//        }
+//        nodeGroups.add(ng);
+//    }
+
+    public static void addIfNotExist(HashMap<NodeGroup, ArrayList<NodeGroup>> nodeGroupNeighbours,
+                                     NodeGroup ng) {
+        if (nodeGroupNeighbours.get(ng) == null) {
+            nodeGroupNeighbours.put(ng, new ArrayList<>());
+        }
+    }
+
+    public static void removeAllEdgesBetween(ArrayList<Edge> edges, NodeGroup left, NodeGroup right) {
+        boolean exists = true;
+        while (exists) {
+            exists = false;
+            for (Edge e : edges) {
+                if (e.left.id.equals(left.id) && e.right.id.equals(right.id) ||
+                    e.left.id.equals(right.id) && e.right.id.equals(left.id)) {
+                    exists = true;
+                    edges.remove(e);
+                    break;
+                }
             }
         }
-        nodeGroups.add(ng);
     }
 
     public static int parseInput(List<String> lines) {
         // Hashset of NodeGroup with edges
-        ArrayList<NodeGroup> nodeGroups = new ArrayList<>();
+//        ArrayList<NodeGroup> nodeGroups = new ArrayList<>();
+        ArrayList<Edge> edges = new ArrayList<>();
         HashMap<NodeGroup, ArrayList<NodeGroup>> nodeGroupNeighbours = new HashMap<>();
 
         for (String line : lines) {
             String[] nodes = line.split(": ");
             NodeGroup left = new NodeGroup(nodes[0].trim());
-            addIfNotExist(nodeGroups, left);
-            if (nodeGroupNeighbours.get(left) == null) {
-                nodeGroupNeighbours.put(left, new ArrayList<>());
-            }
+            addIfNotExist(nodeGroupNeighbours, left);
             for (String r : nodes[1].trim().split(" ")) {
                 NodeGroup right = new NodeGroup(r);
-                addIfNotExist(nodeGroups, right);
+                addIfNotExist(nodeGroupNeighbours, right);
                 // Add for left
                 nodeGroupNeighbours.get(left).add(right);
                 // Add for right
-                if (nodeGroupNeighbours.get(right) == null) {
-                    nodeGroupNeighbours.put(right, new ArrayList<>());
-                }
                 nodeGroupNeighbours.get(right).add(left);
+                // Make an edge
+                edges.add(new Edge(left, right));
             }
         }
 
         // Every iteration, pick random edge
         // Stop when NodeGroup size == 2
         // If Edges size == 3, return the multiple, else rerun Karger-Stein
-        while (nodeGroups.size() > 2) {
-            NodeGroup randomLeft = nodeGroups.get(new Random().nextInt(nodeGroups.size()));
-            // Pick random neighbour
-            ArrayList<NodeGroup> leftNeighbours = nodeGroupNeighbours.get(randomLeft);
-            if (leftNeighbours.size() == 0) {
-                System.out.println("Uh oh");
-            }
-            NodeGroup randomRight = leftNeighbours.get(new Random().nextInt(leftNeighbours.size()));
-
-            // Contract edges
-            ArrayList<NodeGroup> rightNeighbours = nodeGroupNeighbours.get(randomRight);
-            for (NodeGroup ng : rightNeighbours) {
-                if (ng == randomLeft) {
-                    continue;
-                }
-                // For each repeated edge repeat neighbour (does that work?)
-                leftNeighbours.add(ng);
-                // Remove randomRight as their neighbour
-                nodeGroupNeighbours.get(ng).removeAll(Collections.singletonList(randomRight));
-                // Add randomLeft as their new neighbour
-                nodeGroupNeighbours.get(ng).add(randomLeft);
-                // If node has no more neighbours, remove node
+        while (nodeGroupNeighbours.size() > 2) {
+            Edge randomEdge = edges.get(new Random().nextInt(edges.size()));
+            NodeGroup left = randomEdge.left;
+            NodeGroup right = randomEdge.right;
+            // Merge nodes into one singular node
+            left.addNodeGroup(right);
+            for (NodeGroup rightNeighbour : nodeGroupNeighbours.get(randomEdge.right)) {
+                // Remove old edge between right and its neighbour
+                removeAllEdgesBetween(edges, right, rightNeighbour);
+                // Remove from right neighbour map
+                nodeGroupNeighbours.get(rightNeighbour).remove(right);
+                // Add new edge between left and rightNeighbour
+                edges.add(new Edge(left, rightNeighbour));
             }
 
-            // Remove randomRight as randomLeft's neighbour
-            nodeGroupNeighbours.get(randomLeft).removeAll(Collections.singletonList(randomRight));
-            // Add randomRight to randomLeft node group
-            randomLeft.addNodeGroup(randomRight);
-            // Remove randomRight from node groups
-            nodeGroups.removeAll(Collections.singletonList(randomRight));
-            nodeGroupNeighbours.remove(randomRight);
-            System.out.println(nodeGroups.size());
+            // Remove right node
+            nodeGroupNeighbours.remove(right);
         }
 
         int minCut = -1;
