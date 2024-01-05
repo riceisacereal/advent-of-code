@@ -2,15 +2,15 @@ import java.util.HashSet;
 
 public class NodeGroup {
     String id;
-    HashSet<String> group;
+    HashSet<String> nodes;
 
     public NodeGroup(String parent) {
-        group = new HashSet<>();
+        nodes = new HashSet<>();
         id = parent;
-        group.add(parent);
+        nodes.add(parent);
     }
 
     public void addNodeGroup(NodeGroup o) {
-        group.addAll(o.group);
+        nodes.addAll(o.nodes);
     }
 }
