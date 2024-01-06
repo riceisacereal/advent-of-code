@@ -16,6 +16,6 @@ Started: 2022-02-01
 Started: 2022-12-01
 
 ### ❄️ 2023 - Java
-**50 ⭐** <img src="./aoccompleted.gif" width="20"/>
+**50 ⭐** <img src="aoccompleted.gif" width="50"/>\
 Started: 2023-12-01\
 Finished: 2024-01-04
