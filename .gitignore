@@ -2,10 +2,12 @@
 cmake-build-debug
 *.exe
 
-# 2023 Ignore IntelliJ files + build files
-2023/out
+# 2023 Ignore IntelliJ files, build files, and test files for easier refactoring
 2023/.idea
-*.iml
+**/*.iml
+2023/out
+2023/tests
 
+# Ignore original text from Advent of Code
 **/input.txt
-**/test[0-9].txt
+**/test[0-9]*.txt
