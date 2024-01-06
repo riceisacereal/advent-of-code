@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 public class PartOne {
-    private static final String puzzleInput = "2023/Day25/test2.txt";
+    private static final String puzzleInput = "2023/Day25/input.txt";
     private static final int MINCUT = 3;
 
     public static void main(String[] args) throws IOException {
@@ -34,12 +34,12 @@ public class PartOne {
         return ni.next();
     }
 
-    public static int contract(Graph graph) {
+    public static void contract(Graph graph, int limit) {
         // Every iteration, pick random edge
         // Stop when NodeGroup size == 2
-        // If Edges size == 3, return the multiple, else rerun Karger-Stein
+        // If Edges size == 3, return the multiple, else rerun
         HashMap<NodeGroup, ArrayList<NodeGroup>> nodes = graph.nodes;
-        while (nodes.size() > 2) {
+        while (nodes.size() > limit) {
             NodeGroup left = getRandomNodeGroup(nodes);
             // Pick random neighbour
             ArrayList<NodeGroup> leftNeighbours = nodes.get(left);
@@ -68,54 +68,79 @@ public class PartOne {
             // Remove randomRight from node groups
             nodes.remove(right);
         }
-
-        graph.setMinCut();
-        if (graph.minCut == MINCUT) {
-            int product = 1;
-            for (NodeGroup ng : nodes.keySet()) {
-                product *= ng.nodes.size();
-            }
-            return product;
-        }
-
-        return -1;
     }
 
     // Inspiration taken from:
     // https://www.reddit.com/r/adventofcode/comments/18qbsxs/comment/kftp4jr/?utm_source=share&utm_medium=web2x&context=3
     // https://en.wikipedia.org/wiki/Karger's_algorithm
-//    public static int kargerStein(HashMap<NodeGroup, ArrayList<NodeGroup>> nodeGroupNeighbours) {
-//        if (nodeGroupNeighbours.size() <= 6) {
-//            contract(nodeGroupNeighbours, 2);
-//            for (NodeGroup ng : nodeGroupNeighbours.keySet()) {
-//                if (nodeGroupNeighbours.get(ng).size() == MINCUT) {
-//                    int product = 1;
-//                    for (NodeGroup ng2 : nodeGroupNeighbours.keySet()) {
-//                        product *= ng2.nodes.size();
-//                    }
-//                    return product;
+    public static Graph kargerStein(Graph graph) {
+        HashMap<NodeGroup, ArrayList<NodeGroup>> nodes = graph.nodes;
+        if (nodes.size() <= 50) {
+            contract(graph, 2);
+            // Set the minimum cut
+            graph.setMinCut();
+////            System.out.println(graph.minCut);
+//            if (graph.minCut == MINCUT) {
+//                int product = 1;
+//                for (NodeGroup ng : graph.nodes.keySet()) {
+//                    product *= ng.nodes.size();
 //                }
+//                System.out.println(product);
+//                System.exit(0);
 //            }
-//            return -1;
-//        } else {
-//            int limit = (int) Math.ceil(1 + (nodeGroupNeighbours.size() / Math.sqrt(2)));
-//            HashMap<NodeGroup, ArrayList<NodeGroup>> graphOne = copyGraph(nodeGroupNeighbours);
-//            HashMap<NodeGroup, ArrayList<NodeGroup>> graphTwo = copyGraph(nodeGroupNeighbours);
-//            contract(graphOne, limit);
-//            contract(graphTwo, limit);
-//            return Math.min(kargerStein(graphOne), kargerStein(graphTwo));
-//        }
-//    }
+            return graph;
+        } else {
+            int limit = (int) Math.ceil(1 + (nodes.size() / Math.sqrt(2)));
+            Graph graphOne = graph.getCopy();
+            Graph graphTwo = graph.getCopy();
+            contract(graphOne, limit);
+            contract(graphTwo, limit);
+
+            Graph minCutOne = kargerStein(graphOne);
+            Graph minCutTwo = kargerStein(graphTwo);
+            if (minCutOne.minCut < minCutTwo.minCut) {
+                return minCutOne;
+            } else {
+                return minCutTwo;
+            }
+        }
+    }
 
     public static int parseInput(List<String> lines) {
         // Hashset of NodeGroup with edges
         Graph graph = new Graph(lines);
 
-        int product = -1;
-        while (product < 0) {
+        long time1 = System.currentTimeMillis();
+        while (true) {
             Graph currentGraph = graph.getCopy();
-            product = contract(currentGraph);
+            contract(currentGraph, 2);
+            currentGraph.setMinCut();
+            if (currentGraph.minCut == 3) {
+                int product = 1;
+                for (NodeGroup ng : currentGraph.nodes.keySet()) {
+                    product *= ng.nodes.size();
+                }
+                System.out.println(product);
+                break;
+            }
         }
-        return product;
+        long time2 = System.currentTimeMillis();
+        while (true) {
+            Graph minCutGraph = kargerStein(graph.getCopy());
+            if (minCutGraph.minCut == MINCUT) {
+                int product = 1;
+                for (NodeGroup ng : minCutGraph.nodes.keySet()) {
+                    product *= ng.nodes.size();
+                }
+                System.out.println(product);
+                break;
+            }
+        }
+        long time3 = System.currentTimeMillis();
+        System.out.print("Time ms: ");
+        System.out.println(time2 - time1);
+        System.out.print("Time ms: ");
+        System.out.println(time3 - time2);
+        return 0;
     }
 }
