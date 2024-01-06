@@ -30,7 +30,6 @@ public class PartOne {
         for (int i = 0; i < index - 1; i++) {
             ni.next();
         }
-
         return ni.next();
     }
 
@@ -49,18 +48,16 @@ public class PartOne {
             // Add randomRight to left node group - merge with node group
             left.addNodeGroup(right);
             ArrayList<NodeGroup> rightNeighbours = nodes.get(right);
+            // Remove left as right's neighbour - ignore all edges between them
+            rightNeighbours.removeAll(Collections.singletonList(left));
             for (NodeGroup rightNeighbour : rightNeighbours) {
-                if (rightNeighbour == left) { // For all neighbours of right excluding left
-                    continue;
-                }
-
                 ArrayList<NodeGroup> rnn = nodes.get(rightNeighbour); // RightNeighbour's neighbours
                 // Remove right as their neighbour - disconnect old edges
-                rnn.removeAll(Collections.singletonList(right)); // Will be rerun if multiple edges present, but doesn't matter
+                rnn.remove(right); // Should be run enough times to remove all instances of right from its neighbours
 
                 // Make new edge
                 // Add left as their new neighbour
-                rnn.add(left); //TODO
+                rnn.add(left);
                 // Add new neighbour to left
                 leftNeighbours.add(rightNeighbour);
             }
@@ -75,12 +72,40 @@ public class PartOne {
     // Inspiration taken from:
     // https://www.reddit.com/r/adventofcode/comments/18qbsxs/comment/kftp4jr/?utm_source=share&utm_medium=web2x&context=3
     // https://en.wikipedia.org/wiki/Karger's_algorithm
+    public static Graph kargerStein(Graph graph) {
+        HashMap<NodeGroup, ArrayList<NodeGroup>> nodes = graph.nodes;
+        if (nodes.size() <= 10) {
+            contract(graph, 2);
+            graph.setMinCut();
+            return graph;
+        } else {
+            int limit = (int) Math.ceil(1 + (nodes.size() / 3.0));
+            Graph graphOne = graph.getCopy();
+            Graph graphTwo = graph.getCopy();
+            contract(graphOne, limit);
+            contract(graphTwo, limit);
+
+            Graph minCutOne = kargerStein(graphOne);
+            Graph minCutTwo = kargerStein(graphTwo);
+            if (minCutOne.minCut < minCutTwo.minCut) {
+                return minCutOne;
+            } else {
+                return minCutTwo;
+            }
+        }
+    }
+
     public static int parseInput(List<String> lines) {
         Graph graph = new Graph(lines);
 
         while (true) {
             Graph currentGraph = graph.getCopy();
-            contract(currentGraph, 2);
+
+            // Karger's only:
+            // contract(currentGraph, 2);
+            // Karger-Stein:
+            currentGraph = kargerStein(currentGraph);
+
             currentGraph.setMinCut();
             if (currentGraph.minCut == MINCUT) {
                 int product = 1;
