@@ -46,26 +46,28 @@ public class PartOne {
             NodeGroup right = leftNeighbours.get(new Random().nextInt(leftNeighbours.size()));
 
             // Contract edges
-            // Add randomRight to randomLeft node group
+            // Add randomRight to left node group - merge with node group
             left.addNodeGroup(right);
             ArrayList<NodeGroup> rightNeighbours = nodes.get(right);
             for (NodeGroup rightNeighbour : rightNeighbours) {
                 if (rightNeighbour == left) { // For all neighbours of right excluding left
                     continue;
                 }
-                // Add new neighbour to left
-                leftNeighbours.add(rightNeighbour);
 
                 ArrayList<NodeGroup> rnn = nodes.get(rightNeighbour); // RightNeighbour's neighbours
-                // Remove right as their neighbour
-                rnn.removeAll(Collections.singletonList(right));
-                // Add randomLeft as their new neighbour
-                rnn.add(left);
+                // Remove right as their neighbour - disconnect old edges
+                rnn.removeAll(Collections.singletonList(right)); // Will be rerun if multiple edges present, but doesn't matter
+
+                // Make new edge
+                // Add left as their new neighbour
+                rnn.add(left); //TODO
+                // Add new neighbour to left
+                leftNeighbours.add(rightNeighbour);
             }
 
-            // Remove randomRight as randomLeft's neighbour
+            // Remove right as left's neighbour
             leftNeighbours.removeAll(Collections.singletonList(right));
-            // Remove randomRight from node groups
+            // Remove right from node groups - contracted away
             nodes.remove(right);
         }
     }
@@ -73,74 +75,20 @@ public class PartOne {
     // Inspiration taken from:
     // https://www.reddit.com/r/adventofcode/comments/18qbsxs/comment/kftp4jr/?utm_source=share&utm_medium=web2x&context=3
     // https://en.wikipedia.org/wiki/Karger's_algorithm
-    public static Graph kargerStein(Graph graph) {
-        HashMap<NodeGroup, ArrayList<NodeGroup>> nodes = graph.nodes;
-        if (nodes.size() <= 50) {
-            contract(graph, 2);
-            // Set the minimum cut
-            graph.setMinCut();
-////            System.out.println(graph.minCut);
-//            if (graph.minCut == MINCUT) {
-//                int product = 1;
-//                for (NodeGroup ng : graph.nodes.keySet()) {
-//                    product *= ng.nodes.size();
-//                }
-//                System.out.println(product);
-//                System.exit(0);
-//            }
-            return graph;
-        } else {
-            int limit = (int) Math.ceil(1 + (nodes.size() / Math.sqrt(2)));
-            Graph graphOne = graph.getCopy();
-            Graph graphTwo = graph.getCopy();
-            contract(graphOne, limit);
-            contract(graphTwo, limit);
-
-            Graph minCutOne = kargerStein(graphOne);
-            Graph minCutTwo = kargerStein(graphTwo);
-            if (minCutOne.minCut < minCutTwo.minCut) {
-                return minCutOne;
-            } else {
-                return minCutTwo;
-            }
-        }
-    }
-
     public static int parseInput(List<String> lines) {
-        // Hashset of NodeGroup with edges
         Graph graph = new Graph(lines);
 
-        long time1 = System.currentTimeMillis();
         while (true) {
             Graph currentGraph = graph.getCopy();
             contract(currentGraph, 2);
             currentGraph.setMinCut();
-            if (currentGraph.minCut == 3) {
+            if (currentGraph.minCut == MINCUT) {
                 int product = 1;
                 for (NodeGroup ng : currentGraph.nodes.keySet()) {
                     product *= ng.nodes.size();
                 }
-                System.out.println(product);
-                break;
+                return product;
             }
         }
-        long time2 = System.currentTimeMillis();
-        while (true) {
-            Graph minCutGraph = kargerStein(graph.getCopy());
-            if (minCutGraph.minCut == MINCUT) {
-                int product = 1;
-                for (NodeGroup ng : minCutGraph.nodes.keySet()) {
-                    product *= ng.nodes.size();
-                }
-                System.out.println(product);
-                break;
-            }
-        }
-        long time3 = System.currentTimeMillis();
-        System.out.print("Time ms: ");
-        System.out.println(time2 - time1);
-        System.out.print("Time ms: ");
-        System.out.println(time3 - time2);
-        return 0;
     }
 }
