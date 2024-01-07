@@ -3,7 +3,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,50 +32,27 @@ public class PartTwo {
         return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
     }
 
-    public static int findLongestDistance(ArrayList<Node> path, Node current, Node end, int acc) {
-        if (current == end) {
-            return acc;
+    public static int findLongestDistance(Stack<Node> path, Node current, Node end, int distance) {
+        // If the neighbour to the end is reached, must go to end, otherwise end will be unreachable
+        if (current == end.getFirstNeighbour()) {
+            return distance + end.connectedNodes.get(end.getFirstNeighbour());
         }
 
-        int max = 0;
+        ArrayList<Integer> distanceToEnd = new ArrayList<>();
         for (Map.Entry<Node, Integer> entry : current.connectedNodes.entrySet()) {
             Node next = entry.getKey();
             if (!path.contains(next)) {
-                ArrayList<Node> newPath = new ArrayList<>(path);
-                newPath.add(next);
-//                System.out.println(newPath == path);
-                max = Math.max(max, findLongestDistance(newPath, next, end, acc + entry.getValue()));
+                path.push(next);
+                distanceToEnd.add(findLongestDistance(path, next, end, distance + entry.getValue()));
+                path.pop();
             }
         }
-        return max;
 
-//        PriorityQueue<Edge> q = new PriorityQueue<>(Collections.reverseOrder(Comparator.comparingInt(a -> a.length)));
-//        Edge se = new Edge(start, 0);
-//        q.add(se);
-//
-//        HashSet<Node> visited = new HashSet<>();
-//        visited.add(start);
-//
-//        Edge current = se;
-//        while (current.node != end) {
-//            current = q.poll();
-//            visited.add(current.node);
-//            Node n = current.node;
-//            for (Map.Entry<Node, Integer> e : n.connectedNodes.entrySet()) {
-//                Node next = e.getKey();
-//                int edgeLength = e.getValue();
-//                if (!visited.contains(next) && current.length + edgeLength >= next.distance) {
-//                    // Add to queue
-//
-//                    q.add();
-////                    visited.add(e.getKey());
-////                    maxDist = Math.max(maxDist, e.getValue() + findLongestDistance(visited, e.getKey()));
-////                    visited.pop();
-//                }
-//            }
-//        }
-//
-//        return current.length;
+        if (distanceToEnd.size() == 0) {
+            return 0;
+        } else {
+            return Collections.max(distanceToEnd);
+        }
     }
 
     public static void mapNodes(List<String> lines, Node[][] nodeMap, Queue<int[]> q) {
@@ -166,52 +142,23 @@ public class PartTwo {
         int maxY = lines.size();
         int maxX = lines.get(0).length();
 
-        // Copy map for debugging
-        char[][] map = new char[maxY][maxX];
-        for (int i = 0; i < maxY; i++) {
-            for (int j = 0; j < maxX; j++) {
-                map[i][j] = lines.get(i).charAt(j);
-            }
-        }
-
         Node start = new Node(new int[] {0, 1});
         Node end = new Node(new int[] {maxY - 1, maxX - 2});
 
-        // DFS to get all intersections/nodes and connections
-//        ArrayList<Node> nodes = new ArrayList<>();
-//        nodes.add(start);
-//        nodes.add(end);
-
-        // Find all nodes
         Node[][] nodeMap = new Node[maxY][maxX];
         nodeMap[0][1] = start;
         nodeMap[maxY - 1][maxX - 2] = end;
+
         Queue<int[]> q = new LinkedList<>();
-        q.add(new int[] {0, 1});
-        mapNodes(lines, nodeMap, q);
-        connectEdges(lines, nodeMap);
+        q.add(new int[] {0, 1}); // Add start
 
-        int sum = 0;
-        for (Node[] na : nodeMap) {
-            for (Node n : na) {
-                if (n == null) continue;
-
-                for (Map.Entry<Node, Integer> entry : n.connectedNodes.entrySet()) {
-                    sum += entry.getValue();
-                }
-//                System.out.println(Arrays.toString(n.coord) + " " + sum);
-            }
-        }
+        mapNodes(lines, nodeMap, q); // Identify all nodes
+        connectEdges(lines, nodeMap); // Link all nodes
 
         // For node map find longest distance
-        ArrayList<Node> longestDistance = new ArrayList<>();
+        Stack<Node> longestDistance = new Stack<>();
         longestDistance.add(start);
 
-//        for (char[] ca : map) {
-//            System.out.println(ca);
-//        }
-
-//        return 0;
         return findLongestDistance(longestDistance, start, end, 0);
     }
 }

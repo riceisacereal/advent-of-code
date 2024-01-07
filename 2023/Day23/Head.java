@@ -2,7 +2,6 @@ public class Head {
     boolean[][] visited;
     int[] coord;
     int distance;
-//    int h;
 
     public Head(int[] coord, int distance, int maxY, int maxX, boolean[][] visited) {
         this.coord = coord;

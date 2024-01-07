@@ -55,7 +55,7 @@ public class PartOne {
                 if (x >= 0 && x < maxX && y >= 0 && y < maxY) {
                     int newDistance = current.distance + 1;
                     int[] newLoc = new int[] {y, x};
-                    if (lines.get(y).charAt(x) != '#' && !current.visited(newLoc) && newDistance > maxDist[y][x]) {
+                    if (lines.get(y).charAt(x) != '#' && !current.visited(newLoc) && newDistance >= maxDist[y][x]) {
                         maxDist[y][x] = newDistance;
                         Head newHead = new Head(newLoc, newDistance, maxY, maxX, current.visited);
                         q.add(newHead);

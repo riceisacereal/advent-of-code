@@ -1,6 +1,6 @@
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Node {
     int[] coord;
@@ -9,6 +9,11 @@ public class Node {
     public Node(int[] coord) {
         this.coord = coord;
         connectedNodes = new HashMap<>();
+    }
+
+    public Node getFirstNeighbour() {
+        Iterator<Node> i = connectedNodes.keySet().iterator();
+        return i.next();
     }
 
     @Override
