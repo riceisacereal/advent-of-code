@@ -82,16 +82,14 @@ public class PartOne {
             int limit = (int) Math.ceil(1 + (nodes.size() / 3.0));
             Graph graphOne = graph.getCopy();
             Graph graphTwo = graph.getCopy();
-            contract(graphOne, limit);
-            contract(graphTwo, limit);
 
-            Graph minCutOne = kargerStein(graphOne);
-            Graph minCutTwo = kargerStein(graphTwo);
-            if (minCutOne.minCut < minCutTwo.minCut) {
-                return minCutOne;
-            } else {
-                return minCutTwo;
-            }
+            contract(graphOne, limit);
+            graphOne = kargerStein(graphOne);
+            if (graphOne.minCut == MINCUT) return graphOne;
+
+            contract(graphTwo, limit);
+            graphTwo = kargerStein(graphTwo);
+            return graphTwo;
         }
     }
 
