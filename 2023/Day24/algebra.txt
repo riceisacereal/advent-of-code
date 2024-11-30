@@ -15,6 +15,10 @@ y = c
 L = (a,b,c) + k(x,y,z)
 L = (24, 13, 10) + k(-3, 1, 2)
 
+h1 = (A,B,C) + k(D,E,F)
+(a - A, b - B, c - C)
+(x - D, y - E, z - F)
+
 19 + -2t = a + xt
 13 + t = b + yt
 30 + -2t = c + zt

@@ -18,4 +18,9 @@ public class Hail {
             i++;
         }
     }
+
+    public Hail(long[] loc, int[] vel) {
+        this.loc = loc;
+        this.vel = vel;
+    }
 }

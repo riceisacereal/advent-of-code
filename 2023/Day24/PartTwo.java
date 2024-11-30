@@ -3,17 +3,24 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Stack;
+
+// 5018 too low
+// 6389 too high
+// I don't remember what I was trying to do anymore but I used an equation solver for part 2
 
 public class PartTwo {
     private static final String puzzleInput = "2023/Day24/input.txt";
 
     public static void main(String[] args) throws IOException {
         List<String> lines = readFile(puzzleInput);
-        int result = parseInput(lines);
+        long result = parseInput(lines);
         System.out.println(result);
     }
 
@@ -21,83 +28,93 @@ public class PartTwo {
         return Files.readAllLines(Paths.get(fileName), StandardCharsets.UTF_8);
     }
 
-    public static boolean checkOrder(ArrayList<Hail> initialOrder, ArrayList<Hail> hails) {
-        for (int i = 0; i < hails.size(); i++) {
-            if (initialOrder.get(i) != hails.get(i)) {
-                 return false;
-            }
+    public static Hail checkAndSetValues(ArrayList<Hail> hails, int x, int y, int z) {
+        // Trajectory of rock: L = (a, b, c) + lambda(x, y, z)
+        Hail one = hails.get(0);
+        long A = one.loc[0];
+        int B = one.vel[0];
+        long C = one.loc[1];
+        int D = one.vel[1];
+
+        long Q = one.loc[2];
+        int R = one.vel[2];
+
+        Hail two = hails.get(1);
+        long E = two.loc[0];
+        int F = two.vel[0];
+        long G = two.loc[1];
+        int H = two.vel[1];
+
+        long S = two.loc[2];
+        int T = two.vel[2];
+
+        Hail three = hails.get(2);
+        long I = three.loc[0];
+        int J = three.vel[0];
+        long K = three.loc[1];
+        int L = three.vel[1];
+
+        long U = three.loc[2];
+        int V = three.vel[2];
+
+        Hail four = hails.get(3);
+        long M = four.loc[0];
+        int N = four.vel[0];
+        long O = four.loc[1];
+        int P = four.vel[1];
+
+        long W = four.loc[2];
+        int X = four.vel[2];
+
+        if ((B*H - B*y - H*x + x*y - F*D + F*y + D*x - x*y) == 0) return null;
+        long b = ((G*x - F*G + H*E - E*y) * (D - y) - (C*x - B*C + A*D - A*y) * (H - y)) /
+            (B*H - B*y - H*x + x*y - F*D + F*y + D*x - x*y);
+        if (H == y) return null;
+        long a = (G*x - F*G + H*E - E*y - b*x + F*b) / (H - y);
+        // Check for remaining hails
+        if (K * (x - J) + L*(I - a) != b * (x - J) + y*(I - a) || O * (x - N) + P*(M - a) != b * (x - N) + y*(M - a)) {
+            return null;
         }
-        return true;
+        // Check for all c values
+        if (D == y || H == y || L == y || P == y) return null;
+        long c1 = (C*z - R*C + D*Q - b*z + R*b - Q*y) / (D - y); // Divide by 0 error in test input but shouldn't be a problem in real input
+        long c2 = (G*z - T*G + H*S - b*z + T*b - S*y) / (H - y);
+        long c3 = (K*z - V*K + L*U - b*z + V*b - U*y) / (L - y);
+        long c4 = (O*z - X*O + P*W - b*z + X*b - W*y) / (P - y);
+
+        if (c1 == c2 && c2 == c3 && c3 == c4) {
+            return new Hail(new long[] {a, b, c4}, new int[] {x, y, z});
+        }
+
+        return null;
     }
 
-    public static int parseInput(List<String> lines) {
+    public static long parseInput(List<String> lines) {
+        // Read in first 4 hails
         ArrayList<Hail> hails = new ArrayList<>();
 
         for (String line : lines) {
             hails.add(new Hail(line));
         }
 
-        // Remove ones with the same coefficient
-//        HashSet<Integer> xCoefficient = new HashSet<>();
-//        int lastIndex = 0;
-//        boolean removed = true;
-//        while (removed) {
-//            removed = false;
-//            for (int i = lastIndex; i < hails.size(); i++) {
-//                Hail h = hails.get(i);
-//                if (xCoefficient.contains(h.vel[0])) {
-//                    hails.remove(h);
-//                    lastIndex = i;
-//                    removed = true;
-//                    break;
-//                } else {
-//                    xCoefficient.add(h.vel[0]);
-//                }
-//            }
-//        }
+        checkAndSetValues(hails, 277, -27, 121);
 
-        for (Hail h : hails) {
-            h.loc[0] += 100L * h.vel[0];
+        int i = 0;
+        for (int x = -500; x <= 500; x++) { // Rough guess of 500 max velocity
+            for (int y = -500; y <= 500; y++) {
+                for (int z = -500; z <= 500; z++) {
+                    i++;
+                    if (i % 10000000 == 0) {
+                        System.out.println(i);
+                    }
+                    Hail rock = checkAndSetValues(hails, x, y, z);
+                    if (rock != null) {
+                        return rock.loc[0] + rock.loc[1] + rock.loc[2];
+                    }
+                }
+            }
         }
-        hails.sort(Comparator.comparingLong(a -> a.loc[0]));
-        ArrayList<Hail> initialOrder = new ArrayList<>(hails);
-        ArrayList<Hail> reverseOrder = new ArrayList<>(hails);
-        Collections.reverse(reverseOrder);
 
-        // Check order for one axis
-        long before = 0;
-        long after = 0;
-        long t = 1000000;
-//        while (true) {
-//            for (Hail h : hails) {
-//                h.loc[0] += h.vel[0];
-//            }
-//            hails.sort(Comparator.comparingLong(a -> a.loc[0]));
-//            if (checkOrder(initialOrder, hails)) {
-//                before = t;
-//            } else {
-//                System.out.println(before + " " +  t);
-//                break;
-//            }
-////            } else if (checkOrder(reverseOrder, hails)) {
-////                after = t;
-////                break;
-////            }
-//            t++;
-//        }
-
-        System.out.println(108375683349444L + 220656145109505L + 289502736377988L);
-        // 11165357 is when order changes
-        System.out.println(before + " " + after);
-
-        // For every time t >= 0
-        // sort on x axis
-//        int points = 0;
-//        for (int i = 0; i < hails.size() - 1; i++) {
-//            for (int j = i + 1; j < hails.size(); j++) {
-////                checkParallel(hails.get(i), hails.get(j));
-//            }
-//        }
-        return 0;
+        return -1;
     }
 }
