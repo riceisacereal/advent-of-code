@@ -33,15 +33,15 @@ namespace Day01
         left[i] = pair[0];
         right[i] = pair[1];
       }
-      
-      Array.Sort(left);
-      Array.Sort(right);
 
       return solvePart == 1 ? SolvePartOne(numLines, left, right) : SolvePartTwo(numLines, left, right);
     }
 
     private static int SolvePartOne(int numLines, int[] left, int[] right)
     {
+      Array.Sort(left);
+      Array.Sort(right);
+
       int sumOfDistance = 0;
       for (int i = 0; i < numLines; i++)
       {
