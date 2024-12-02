@@ -54,7 +54,6 @@ namespace Day02
 
         if (order * (prev - next) <= 0 || Math.Abs(prev - next) > 3)
         {
-          //Console.WriteLine(String.Join(' ', line));
           return false;
         }
       }
@@ -93,10 +92,6 @@ namespace Day02
             subReport[j] = k == i ? line[++k] : line[k];
           }
 
-          if (isSafe(subReport.ToList()))
-          {
-            Console.WriteLine(String.Join(' ', subReport));
-          }
           safeCount += isSafe(subReport.ToList()) ? 1 : 0;
         }
         safeReportCount += safeCount >= 1 ? 1 : 0;
