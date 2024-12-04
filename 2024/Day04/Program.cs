@@ -61,6 +61,29 @@ namespace Day04
         MapIndexY += displacement[1];
         XMASIndex++;
       }
+
+      public static bool MASPairCheck(char a, char b)
+      {
+        return a + b == 160 && Math.Abs(a - b) == 6;
+      }
+
+      public static bool MASCheck(string[] lines, int x, int y)
+      {
+        if (x < 1 || x >= lines[0].Length - 1 || y < 1 || y >= lines.Length - 1)
+        {
+          return false;
+        }
+
+        string[] directions = ["NE", "SE", "SW", "NW"];
+        char[] directionChars = { 'a', 'a', 'a', 'a' };
+        for (int i = 0; i < 4; i++)
+        {
+          int[] displacement = DirectionalDisplacement[directions[i]];
+          directionChars[i] = lines[y - displacement[1]][x + displacement[0]];
+        }
+
+        return MASPairCheck(directionChars[0], directionChars[2]) && MASPairCheck(directionChars[1], directionChars[3]);
+      }
     }
 
     private static void Main(string[] args)
@@ -78,7 +101,7 @@ namespace Day04
         Console.WriteLine("Exception: " + e.Message);
       }
 
-      solution = Solve(allLines, 1);
+      solution = Solve(allLines, 2);
       Console.WriteLine(solution);
     }
 
@@ -140,29 +163,31 @@ namespace Day04
 
     private static int SolvePartTwo(string[] lines)
     {
-      int sum = 0;
-      bool enabled = true;
-      foreach (string line in lines)
+      int maxX = lines[0].Length;
+      int maxY = lines.Length;
+
+      int countMAS = 0;
+      for (int y = 0; y < maxY; y++)
       {
-        MatchCollection muls = Regex.Matches(line, @"mul\((\d{1,3}),(\d{1,3})\)|do\(\)|don't\(\)");
-        foreach (Match m in muls)
+        for (int x = 0; x < maxX; x++)
         {
-          if (m.Value == "do()")
+          Queue<XMASCheck> xmasQueue = new();
+
+          char c = lines[y][x];
+          if (c != 'A')
           {
-            enabled = true;
+            continue;
           }
-          else if (m.Value == "don't()")
+
+          // M 77 S 83
+          if (XMASCheck.MASCheck(lines, x, y))
           {
-            enabled = false;
-          }
-          else if (enabled)
-          {
-            sum += Int32.Parse(m.Groups[1].Value) * Int32.Parse(m.Groups[2].Value);
+            countMAS++;
           }
         }
       }
 
-      return sum;
+      return countMAS;
     }
   }
 }
