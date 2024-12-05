@@ -79,7 +79,7 @@ namespace Day04
         for (int i = 0; i < 4; i++)
         {
           int[] displacement = DirectionalDisplacement[directions[i]];
-          directionChars[i] = lines[y - displacement[1]][x + displacement[0]];
+          directionChars[i] = lines[y + displacement[1]][x + displacement[0]];
         }
 
         return MASPairCheck(directionChars[0], directionChars[2]) && MASPairCheck(directionChars[1], directionChars[3]);
