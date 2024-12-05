@@ -9,5 +9,5 @@ cmake-build-debug
 2023/tests
 
 # Ignore original text from Advent of Code
-**/input.txt
-**/test[0-9]*.txt
+# **/input.txt
+# **/test[0-9]*.txt
